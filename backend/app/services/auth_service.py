@@ -36,7 +36,7 @@ def create_access_token(
     id_usuario: int, duration_token=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
 ):
     date_expires = datetime.now(timezone.utc) + duration_token
-    dict_info = {"sub": id_usuario, "exp": date_expires}
+    dict_info = {"sub": str(id_usuario), "exp": date_expires}
     encoded_jwt = jwt.encode(dict_info, SECRET_KEY, algorithm=ALGORITHM)  # type: ignore
     return encoded_jwt
 
@@ -47,6 +47,6 @@ def decode_token(token: str):
         usuario_id = payload.get("sub")
         if usuario_id is None:
             raise JWTError("Token inválido")
-        return usuario_id
-    except JWTError:
+        return int(usuario_id)
+    except (JWTError, ValueError):
         raise

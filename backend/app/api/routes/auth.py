@@ -62,9 +62,13 @@ async def login_form(
             status_code=400, detail="Usuario não encontrado ou senha incorreta"
         )
     else:
-        access_token = create_access_token(id_usuario=usuario.id) #type: ignore
+        access_token = create_access_token(id_usuario=usuario.id)  # type: ignore
+        refresh_token = create_access_token(
+            id_usuario=usuario.id, duration_token=timedelta(days=7)  # type: ignore
+        )
         return {
             "access_token": access_token,
+            "refresh_token": refresh_token,
             "token_type": "bearer",
         }
 
