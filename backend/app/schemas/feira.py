@@ -4,7 +4,6 @@ from datetime import datetime
 
 
 class FeiraCreate(BaseModel):
-    usuario_id: int
     nome: str
     orcamento: float
 
