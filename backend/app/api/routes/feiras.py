@@ -4,7 +4,6 @@ from app.models.usuario import Usuario
 from app.core.database import db, pegar_session
 from app.dependencies.auth import verify_token
 from app.schemas.feira import FeiraCreate, FeiraUpdate, FeiraSchema
-from app.schemas.auth import LoginSchema
 from sqlalchemy.orm import Session
 
 feiras_router = APIRouter(
@@ -12,9 +11,12 @@ feiras_router = APIRouter(
 )
 
 
-@feiras_router.get("/")
-async def listar_feiras():
-    return {"message": "Listando feiras"}
+@feiras_router.get("/feira")
+async def listar_feiras(
+    session: Session = Depends(pegar_session), usuario: Usuario = Depends(verify_token)
+):
+    feiras_db = session.query(Feira).filter(Feira.usuario_id == usuario.id).all()  # type: ignore
+    return [FeiraSchema.from_orm(feira) for feira in feiras_db]
 
 
 @feiras_router.post("/feira")
@@ -50,9 +52,11 @@ async def atualizar_feira(
         raise HTTPException(status_code=404, detail="Feira não encontrada")
     if feira_db.usuario_id != usuario.id:  # type: ignore
         raise HTTPException(status_code=403, detail="Acesso negado")
-    
+
     if feira_db.status == "finalizada":
-        raise HTTPException(status_code=400, detail="Feira já finalizada, não pode ser editada")
+        raise HTTPException(
+            status_code=400, detail="Feira já finalizada, não pode ser editada"
+        )
 
     if feira_update.nome is not None:
         feira_db.nome = feira_update.nome
