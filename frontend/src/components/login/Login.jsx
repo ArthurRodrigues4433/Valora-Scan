@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import './Login.css'
 import { FcGoogle } from "react-icons/fc"
 import { AiOutlineApple } from "react-icons/ai"
@@ -102,7 +102,7 @@ const Login = () => {
                     </button>
                 </div>
                 <div className="cadastro">
-                    Ainda não tem conta? <a className='criarConta' href="/register">Criar conta</a>
+                    Ainda não tem conta? <a className='criarConta' href="/auth/register">Criar conta</a>
                 </div>
             </form>
         </div>

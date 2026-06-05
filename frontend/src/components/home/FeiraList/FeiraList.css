@@ -1,0 +1,36 @@
+/* =========================
+   SEÇÕES
+========================= */
+
+.container-feiras,
+.container-scans {
+    margin-top: 24px;
+    padding: 0 16px;
+}
+
+.section-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.section-title h3 {
+    font-size: 18px;
+    color: #222;
+}
+
+.section-title button {
+    border: none;
+    background: transparent;
+    color: #2f8d3f;
+    font-weight: 600;
+}
+
+@media (min-width: 768px) {
+    .container-feiras {
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}

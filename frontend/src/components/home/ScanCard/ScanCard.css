@@ -1,0 +1,52 @@
+/* =========================
+   SCANS
+========================= */
+
+.card-scan {
+    background: white;
+    border-radius: 18px;
+    padding: 14px;
+    margin-bottom: 10px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.produto {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.icone-produto {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #dff5e3;
+    flex-shrink: 0;
+}
+
+.produto h4 {
+    font-size: 14px;
+    color: #222;
+}
+
+.produto small {
+    font-size: 12px;
+    color: #888;
+}
+
+.preco {
+    text-align: right;
+}
+
+.preco strong {
+    display: block;
+    color: #222;
+}
+
+.preco span {
+    color: #2f8d3f;
+    font-size: 12px;
+}

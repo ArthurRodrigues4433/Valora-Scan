@@ -1,0 +1,40 @@
+/* =========================
+   MENU INFERIOR
+========================= */
+
+.bottom-nav {
+    position: fixed;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    height: 70px;
+
+    background: white;
+
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+    box-shadow: 0 -4px 15px rgba(0, 0, 0, .05);
+
+    z-index: 1000;
+}
+
+.bottom-nav button {
+    background: none;
+    border: none;
+    color: #666;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+@media (min-width: 768px) {
+    .bottom-nav {
+        max-width: 700px;
+        margin: auto;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+}

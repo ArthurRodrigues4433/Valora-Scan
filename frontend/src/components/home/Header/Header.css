@@ -1,0 +1,155 @@
+.container-sidebar {
+    background: #2f8d3f;
+    color: #fff;
+    padding: 24px 20px 28px;
+    border-radius: 0 0 28px 28px;
+}
+
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    position: relative;
+}
+
+.header-saudacao {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.header-top h2 {
+    font-size: 14px;
+    font-weight: 500;
+    opacity: .9;
+}
+
+.header-top h1 {
+    margin-top: 6px;
+    font-size: clamp(24px, 6vw, 34px);
+    line-height: 1.15;
+    font-weight: 700;
+    max-width: 240px;
+}
+
+/* =========================
+   NOTIFICAÇÃO (dentro do header, canto direito)
+========================= */
+
+.icon-notificacao {
+    position: relative;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, .4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+
+.notificacoes-popout {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 260px;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    padding: 12px;
+    z-index: 200;
+    color: #333;
+}
+
+.notificacoes-popout h4 {
+    margin: 0 0 8px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #333;
+}
+
+.notificacoes-popout p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+/* =========================
+   CARD ECONOMIA
+========================= */
+
+.container-economia {
+    position: relative;
+    margin-top: 20px;
+    padding: 18px;
+    border-radius: 18px;
+    background: rgba(255, 255, 255, .12);
+    backdrop-filter: blur(10px);
+}
+
+.container-economia span {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.economia-conteudo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.economia-conteudo h2 {
+    margin: 6px 0;
+    font-size: clamp(32px, 8vw, 42px);
+    font-weight: 700;
+    flex: 1;
+}
+
+.star-icon {
+    font-size: 2rem;
+    color: #f5a623;
+    align-self: flex-start;
+    flex-shrink: 0;
+}
+
+.container-economia p {
+    font-size: 13px;
+    opacity: .9;
+}
+
+/* =========================
+   RESPONSIVIDADE
+========================= */
+
+@media (max-width: 480px) {
+    .icon-notificacao {
+        width: 38px;
+        height: 38px;
+        font-size: 1.3rem;
+    }
+
+    .notificacoes-popout {
+        width: 220px;
+    }
+
+    .header-top h1 {
+        max-width: 200px;
+    }
+}
+
+@media (max-width: 360px) {
+    .icon-notificacao {
+        width: 34px;
+        height: 34px;
+        font-size: 1.1rem;
+    }
+
+    .notificacoes-popout {
+        width: 200px;
+    }
+}

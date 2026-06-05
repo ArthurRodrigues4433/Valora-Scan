@@ -14,9 +14,13 @@ app.add_middleware(
 from app.api.routes.auth import auth_router
 from app.api.routes.feiras import feiras_router
 from app.api.routes.feira_itens import feira_itens_router
+from app.api.routes.usuarios import usuarios_router
+from app.api.routes.relatorios import relatorios_router
 
 app.include_router(auth_router)
 app.include_router(feiras_router)
 app.include_router(feira_itens_router)
+app.include_router(usuarios_router)
+app.include_router(relatorios_router)
 
 # uvicorn app.main:app --reload

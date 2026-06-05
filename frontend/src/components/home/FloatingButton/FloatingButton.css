@@ -1,0 +1,31 @@
+/* =========================
+   BOTÃO FLUTUANTE
+========================= */
+
+.btn-scan {
+    position: fixed;
+    right: 20px;
+    bottom: 85px;
+
+    border: none;
+    border-radius: 999px;
+
+    background: #2f8d3f;
+    color: white;
+
+    padding: 14px 22px;
+
+    font-weight: 600;
+    font-size: 14px;
+
+    box-shadow: 0 6px 20px rgba(47, 141, 63, .3);
+
+    z-index: 999;
+}
+
+@media (max-width: 360px) {
+    .btn-scan {
+        padding: 12px 18px;
+        font-size: 13px;
+    }
+}
