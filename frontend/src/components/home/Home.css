@@ -21,7 +21,19 @@ body,
     width: 100%;
     min-height: 100vh;
     background: #f5f6f8;
-    padding-bottom: 140px;
+    /* Remover padding-bottom e usar flex */
+    display: flex;
+    flex-direction: column;
+}
+
+/* =========================
+   MAIN CONTENT (flex grow)
+========================= */
+
+.main-content {
+    flex: 1;
+    padding-bottom: 80px;
+    /* Apenas o espaço necessário para o BottomNav */
 }
 
 /* =========================

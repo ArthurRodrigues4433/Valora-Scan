@@ -1,11 +1,10 @@
 ﻿from sqlalchemy.orm import Session
 from sqlalchemy import func
-from datetime import datetime
+from datetime import datetime, timedelta
 from decimal import Decimal
 from app.models.feira import Feira
 from app.models.nota_fiscal import NotaFiscal
-from app.models.nota_fiscal_item import NotaFiscalItem  # <-- adicionar
-
+from app.models.nota_fiscal_item import NotaFiscalItem
 
 def calcular_economia_mensal(usuario_id: int, session: Session):
     agora = datetime.utcnow()
@@ -61,3 +60,51 @@ def calcular_economia_mensal(usuario_id: int, session: Session):
         "comparacao_mes_anterior": None,
         "itens_escaneados": int(itens_escaneados),  # <-- adicionar
     }
+
+from datetime import datetime, timedelta
+from app.models.nota_fiscal_item import NotaFiscalItem
+from app.models.nota_fiscal import NotaFiscal
+from app.models.feira import Feira
+
+
+def listar_ultimos_scans(
+    usuario_id: int, session: Session, limit: int = 5
+) -> list[dict]:
+    scans_db = (
+        session.query(NotaFiscalItem)
+        .join(NotaFiscal, NotaFiscalItem.nota_fiscal_id == NotaFiscal.id)
+        .join(Feira, NotaFiscal.feira_id == Feira.id)
+        .filter(Feira.usuario_id == usuario_id)
+        .order_by(NotaFiscalItem.created_at.desc())
+        .limit(limit)
+        .all()
+    )
+
+    result = []
+    agora = datetime.utcnow()
+
+    for item in scans_db:
+        diff = agora - item.created_at
+        if diff < timedelta(minutes=1): #type: ignore
+            tempo_str = "Agora"
+        elif diff < timedelta(hours=1):  # type: ignore
+            mins = int(diff.total_seconds() / 60)
+            tempo_str = f"{mins} min atrás"
+        elif diff < timedelta(days=1):  # type: ignore
+            hours = int(diff.total_seconds() / 3600)
+            tempo_str = f"{hours}h atrás"
+        else:
+            dias = diff.days
+            tempo_str = f"{dias}d atrás"
+
+        result.append(
+            {
+                "id": item.id,
+                "nome": item.produto_nome,
+                "preco": float(item.preco_total),  # type: ignore
+                "economia": float(item.diferenca) if item.diferenca else 0.0,  # type: ignore
+                "tempo": tempo_str,
+            }
+        )
+
+    return result

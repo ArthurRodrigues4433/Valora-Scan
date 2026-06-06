@@ -9,8 +9,10 @@ class NotaFiscalItemBase(BaseModel):
     preco_unitario: float
     preco_total: float
 
+
 class NotaFiscalItemCreate(NotaFiscalItemBase):
     pass
+
 
 class NotaFiscalItemUpdate(BaseModel):
     produto_nome: Optional[str] = None
@@ -21,6 +23,7 @@ class NotaFiscalItemUpdate(BaseModel):
     valor_esperado: Optional[float] = None
     diferenca: Optional[float] = None
 
+
 class NotaFiscalItemSchema(NotaFiscalItemBase):
     id: int
     divergencia: bool
@@ -28,5 +31,15 @@ class NotaFiscalItemSchema(NotaFiscalItemBase):
     diferenca: Optional[float]
     nota_fiscal_id: int
     created_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class ScanResumoSchema(BaseModel):
+    id: int
+    nome: str
+    preco: float
+    economia: float
+    tempo: str
 
     model_config = ConfigDict(from_attributes=True)

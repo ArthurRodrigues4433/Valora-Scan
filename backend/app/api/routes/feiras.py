@@ -5,6 +5,7 @@ from app.core.database import db, pegar_session
 from app.dependencies.auth import verify_token
 from app.schemas.feira import FeiraCreate, FeiraUpdate, FeiraSchema
 from sqlalchemy.orm import Session
+from app.services.feira_service import listar_feiras_resumo
 
 feiras_router = APIRouter(
     prefix="/feiras", tags=["feiras"], dependencies=[Depends(verify_token)]
@@ -83,3 +84,10 @@ async def deletar_feira(
     session.delete(feira_db)
     session.commit()
     return {"message": "Feira deletada com sucesso"}
+
+
+@feiras_router.get("/feira/resumo")
+async def listar_feiras(
+    session: Session = Depends(pegar_session), usuario: Usuario = Depends(verify_token)
+):
+    return listar_feiras_resumo(usuario.id, session)

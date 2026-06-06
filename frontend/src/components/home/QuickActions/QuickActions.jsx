@@ -1,15 +1,15 @@
 import "./QuickActions.css";
 import { Link } from "react-router-dom";
 import { RiQrScan2Line } from "react-icons/ri";
-import { MdStorefront } from "react-icons/md";
-import { AiOutlineScan } from "react-icons/ai";
-import { BsClockHistory } from "react-icons/bs";
+import { TbReplace } from "react-icons/tb";
+import { BsCart4 } from "react-icons/bs";
+import { IoTimeOutline } from "react-icons/io5";
 
 const quickActionsData = [
     { id: 1, icon: <RiQrScan2Line />, label: "Novo Scan", to: "/scan" },
-    { id: 2, icon: <MdStorefront />, label: "Nova Feira", to: "/feira/nova" },
-    { id: 3, icon: <AiOutlineScan />, label: "Comparar", to: "/comparar" },
-    { id: 4, icon: <BsClockHistory />, label: "Histórico", to: "/historico" },
+    { id: 2, icon: <BsCart4 />, label: "Nova Feira", to: "/novafeira" },
+    { id: 3, icon: <TbReplace />, label: "Comparar", to: "/comparar" },
+    { id: 4, icon: <IoTimeOutline />, label: "Histórico", to: "/historico" },
 ];
 
 const QuickActions = () => {
@@ -17,12 +17,19 @@ const QuickActions = () => {
         <section className="container-acesso-rapido">
             {quickActionsData.map((action) => (
                 <Link key={action.id} to={action.to} className="card-acesso-rapido">
-                    <div className="icon">{action.icon}</div>
-                    <span>{action.label}</span>
+                    <QuickActionCard icon={action.icon} label={action.label} />
                 </Link>
             ))}
         </section>
     );
 };
+
+const QuickActionCard = ({ icon, label }) => (
+    <div className="card-acesso-rapido-content">
+        {icon && <div className="icon">{icon}</div>}
+        {!icon && <div className="icon"></div>}
+        <span>{label}</span>
+    </div>
+);
 
 export default QuickActions;

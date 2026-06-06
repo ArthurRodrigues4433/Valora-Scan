@@ -10,11 +10,13 @@ import BottomNav from "./BottomNav/BottomNav";
 const Home = () => {
     return (
         <div className="container-geral">
-            <Header />
-            <QuickActions />
-            <Stats />
-            <FeiraList />
-            <ScanList />
+            <div className="main-content">
+                <Header />
+                <QuickActions />
+                <Stats />
+                <FeiraList />
+                <ScanList />
+            </div>
             <FloatingButton />
             <BottomNav />
         </div>

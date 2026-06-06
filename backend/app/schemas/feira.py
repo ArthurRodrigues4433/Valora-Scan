@@ -24,3 +24,14 @@ class FeiraSchema(BaseModel):
     updated_at: Optional[datetime] = None
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class FeiraResumoSchema(BaseModel):
+    id: int
+    nome: str
+    economia: float
+    gasto_atual: float
+    gasto_total: float
+    progresso: float
+
+    model_config = ConfigDict(from_attributes=True)

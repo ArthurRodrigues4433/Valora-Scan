@@ -48,7 +48,7 @@ const Header = () => {
             <div className="header-top">
                 <div>
                     <h2>Olá, {nomeUsuario}</h2>
-                    <h1>Quanto vai economizar hoje?</h1>
+                    <h1>Bem-vindo!</h1>
                 </div>
                 <div className="icon-notificacao"><IoMdNotificationsOutline /></div>
             </div>
