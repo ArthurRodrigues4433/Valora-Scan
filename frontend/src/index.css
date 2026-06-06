@@ -1,7 +1,31 @@
+:root {
+    --primary-color: #2f8d3f;
+    --bg-color: #ffffff;
+    --text-color: #222222;
+    --border-color: #e5e6eb;
+    --shadow-color: rgba(0, 0, 0, 0.1);
+}
+
 body {
-  overflow-x: hidden;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  font-family: 'Inter', 'Roboto', sans-serif;
+    overflow-x: hidden;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', 'Roboto', sans-serif;
+    background: #f5f6f8;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+    width: 100%;
+    min-height: 100vh;
+    background: #f5f6f8;
+    font-family: Inter, sans-serif;
 }

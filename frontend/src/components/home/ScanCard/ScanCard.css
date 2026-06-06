@@ -3,14 +3,79 @@
 ========================= */
 
 .card-scan {
-    background: white;
+    background: var(--bg-color);
     border-radius: 18px;
     padding: 14px;
     margin-bottom: 10px;
+    box-shadow: 0 2px 12px var(--shadow-color);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
 
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.card-scan:hover,
+.card-scan:active {
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+    transform: translateY(-3px);
+}
+
+/* Responsividade mobile */
+@media (max-width: 480px) {
+    .card-scan {
+        padding: 12px;
+        border-radius: 14px;
+    }
+
+    .icone-produto {
+        width: 36px;
+        height: 36px;
+    }
+
+    .produto h4 {
+        font-size: 13px;
+    }
+
+    .produto small {
+        font-size: 11px;
+    }
+
+    .preco strong {
+        font-size: 13px;
+    }
+
+    .preco span {
+        font-size: 11px;
+    }
+}
+
+@media (max-width: 360px) {
+    .card-scan {
+        padding: 10px;
+        border-radius: 12px;
+    }
+
+    .icone-produto {
+        width: 32px;
+        height: 32px;
+    }
+
+    .produto h4 {
+        font-size: 12px;
+    }
+
+    .produto small {
+        font-size: 10px;
+    }
+}
+
+@media (min-width: 768px) {
+    .card-scan {
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+    }
 }
 
 .produto {
@@ -29,7 +94,7 @@
 
 .produto h4 {
     font-size: 14px;
-    color: #222;
+    color: var(--text-color);
 }
 
 .produto small {

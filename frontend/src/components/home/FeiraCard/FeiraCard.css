@@ -3,10 +3,18 @@
 ========================= */
 
 .card-feira {
-    background: white;
+    background: var(--bg-color);
     border-radius: 18px;
     padding: 16px;
     margin-bottom: 12px;
+    box-shadow: 0 2px 12px var(--shadow-color);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.card-feira:hover,
+.card-feira:active {
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+    transform: translateY(-3px);
 }
 
 .linha-topo {
@@ -17,7 +25,7 @@
 
 .linha-topo h4 {
     font-size: 15px;
-    color: #222;
+    color: var(--text-color);
 }
 
 .linha-topo small {
@@ -36,7 +44,7 @@
 }
 
 .economia strong {
-    color: #2f8d3f;
+    color: var(--primary-color);
     font-size: 15px;
 }
 
@@ -45,12 +53,13 @@
     justify-content: space-between;
     margin: 14px 0 10px;
     font-size: 13px;
+    color: var(--text-color);
 }
 
 .barra {
     width: 100%;
     height: 6px;
-    background: #e5e5e5;
+    background: var(--border-color);
     border-radius: 999px;
     overflow: hidden;
 }
@@ -58,5 +67,5 @@
 .progresso {
     width: 72%;
     height: 100%;
-    background: #2f8d3f;
+    background: var(--primary-color);
 }

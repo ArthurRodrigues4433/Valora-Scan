@@ -1,10 +1,9 @@
 :root {
     --primary-color: #2f8d3f;
-    /* seu verde atual */
     --bg-color: #fff;
     --text-color: #222;
     --border-color: #e5e6eb;
-    --nav-shadow: 0 6px 32px 0 rgba(51, 61, 75, 0.12);
+    --shadow-color: rgba(0, 0, 0, 0.1);
 }
 
 .bottom-nav {
@@ -20,7 +19,7 @@
     padding: 12px 22px;
     background: var(--bg-color);
     border-radius: 32px;
-    box-shadow: var(--nav-shadow);
+    box-shadow: 0 6px 28px var(--shadow-color);
     z-index: 99;
     border: 1px solid var(--border-color);
     gap: 8px;
@@ -52,8 +51,7 @@
 .card-nav:active {
     transform: translateY(-7px) scale(1.15);
     background: rgba(56, 255, 89, 0.08);
-    /* use o verde do seu theme */
-    box-shadow: 0 2px 16px 0 rgba(65, 245, 95, 0.15);
+    box-shadow: 0 4px 20px rgba(65, 245, 95, 0.35);
 }
 
 .card-nav-content {

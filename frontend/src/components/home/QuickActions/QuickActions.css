@@ -13,13 +13,19 @@
     flex-direction: column;
     align-items: center;
     cursor: pointer;
-    transition: transform 0.2s ease-in-out;
+    transition: transform 0.2s ease-in-out, box-shadow 0.3s ease;
     text-decoration: none;
     color: inherit;
+    background: var(--bg-color);
+    border-radius: 18px;
+    padding: 16px 12px;
+    box-shadow: 0 2px 12px var(--shadow-color);
 }
 
-.card-acesso-rapido:hover {
-    transform: scale(1.05);
+.card-acesso-rapido:hover,
+.card-acesso-rapido:active {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
 }
 
 /* Ícone circular */
@@ -27,20 +33,59 @@
     width: 70px;
     height: 70px;
     border-radius: 50%;
-    background-color: #e6f7ec;
-    /* fundo suave verde */
+    background-color: rgba(47, 141, 63, 0.1);
     display: flex;
     justify-content: center;
     align-items: center;
     margin-bottom: 8px;
     font-size: 28px;
-    color: #2ecc71;
-    /* verde principal */
+    color: var(--primary-color);
 }
 
 /* Texto abaixo do ícone */
 .card-acesso-rapido span {
     font-size: 14px;
     font-weight: 500;
-    color: #333;
+    color: var(--text-color);
+}
+
+/* Responsividade mobile */
+@media (max-width: 480px) {
+    .container-acesso-rapido {
+        padding: 14px;
+        gap: 10px;
+    }
+
+    .card-acesso-rapido {
+        padding: 14px 10px;
+    }
+
+    .card-acesso-rapido .icon {
+        width: 56px;
+        height: 56px;
+        font-size: 22px;
+    }
+
+    .card-acesso-rapido span {
+        font-size: 12px;
+    }
+}
+
+@media (max-width: 360px) {
+    .card-acesso-rapido .icon {
+        width: 48px;
+        height: 48px;
+        font-size: 20px;
+    }
+
+    .card-acesso-rapido span {
+        font-size: 11px;
+    }
+}
+
+@media (min-width: 768px) {
+    .container-acesso-rapido {
+        max-width: 700px;
+        margin: 0 auto;
+    }
 }

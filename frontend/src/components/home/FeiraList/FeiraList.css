@@ -17,14 +17,20 @@
 
 .section-title h3 {
     font-size: 18px;
-    color: #222;
+    color: var(--text-color);
 }
 
 .section-title button {
     border: none;
     background: transparent;
-    color: #2f8d3f;
+    color: var(--primary-color);
     font-weight: 600;
+}
+
+.empty-icon {
+    color: var(--primary-color);
+    opacity: 0.6;
+    margin-bottom: 16px;
 }
 
 .empty-state {
@@ -36,15 +42,10 @@
     text-align: center;
 }
 
-.empty-icon {
-    color: #2d6b3794;
-    margin-bottom: 16px;
-}
-
 .empty-state h4 {
     font-size: 18px;
     font-weight: 600;
-    color: #2d6b3794;
+    color: var(--primary-color);
     margin-bottom: 8px;
 }
 
@@ -55,17 +56,20 @@
 }
 
 .btn-primary {
-    background: #2d6b3794;
+    background: var(--primary-color);
     color: white;
     border: none;
     padding: 12px 24px;
     border-radius: 8px;
     font-weight: 500;
     cursor: pointer;
+    box-shadow: 0 2px 12px var(--shadow-color);
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
 }
 
 .btn-primary:hover {
-    opacity: 0.9;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
 }
 
 .loading-state {
@@ -78,7 +82,7 @@
     width: 40px;
     height: 40px;
     border: 3px solid #f3f3f3;
-    border-top: 3px solid #2d6b3794;
+    border-top: 3px solid var(--primary-color);
     border-radius: 50%;
     animation: spin 1s linear infinite;
 }

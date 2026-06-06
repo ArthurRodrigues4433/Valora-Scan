@@ -16,13 +16,40 @@
 
 .section-title h3 {
     font-size: 18px;
-    color: #222;
+    color: var(--text-color);
 }
 
 .section-title button {
     border: none;
     background: transparent;
-    color: #2f8d3f;
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+@media (min-width: 768px) {
+    .container-scans {
+        max-width: 700px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+.section-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.section-title h3 {
+    font-size: 18px;
+    color: var(--text-color);
+}
+
+.section-title button {
+    border: none;
+    background: transparent;
+    color: var(--primary-color);
     font-weight: 600;
 }
 

@@ -10,9 +10,17 @@
 }
 
 .card-estatistica {
-    background: white;
+    background: var(--bg-color);
     border-radius: 18px;
     padding: 16px;
+    box-shadow: 0 2px 12px var(--shadow-color);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.card-estatistica:hover,
+.card-estatistica:active {
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+    transform: translateY(-4px);
 }
 
 .destaque {

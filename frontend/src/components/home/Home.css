@@ -21,7 +21,6 @@ body,
     width: 100%;
     min-height: 100vh;
     background: #f5f6f8;
-    /* Remover padding-bottom e usar flex */
     display: flex;
     flex-direction: column;
 }

@@ -1,5 +1,5 @@
 .container-sidebar {
-    background: #2f8d3f;
+    background: var(--primary-color);
     color: #fff;
     padding: 24px 20px 28px;
     border-radius: 0 0 28px 28px;
@@ -22,6 +22,7 @@
     font-size: 14px;
     font-weight: 500;
     opacity: .9;
+    color: #fff;
 }
 
 .header-top h1 {
@@ -30,11 +31,9 @@
     line-height: 1.15;
     font-weight: 700;
     max-width: 240px;
+    color: #fff;
 }
 
-/* =========================
-   NOTIFICAÇÃO (dentro do header, canto direito)
-========================= */
 
 .icon-notificacao {
     position: relative;
@@ -55,20 +54,20 @@
     top: calc(100% + 8px);
     right: 0;
     width: 260px;
-    background: white;
-    border: 1px solid #e0e0e0;
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 20px var(--shadow-color);
     padding: 12px;
     z-index: 200;
-    color: #333;
+    color: var(--text-color);
 }
 
 .notificacoes-popout h4 {
     margin: 0 0 8px;
     font-size: 0.95rem;
     font-weight: 700;
-    color: #333;
+    color: var(--text-color);
 }
 
 .notificacoes-popout p {
@@ -77,10 +76,6 @@
     color: #666;
 }
 
-/* =========================
-   CARD ECONOMIA
-========================= */
-
 .container-economia {
     position: relative;
     margin-top: 20px;
@@ -88,6 +83,14 @@
     border-radius: 18px;
     background: rgba(255, 255, 255, .12);
     backdrop-filter: blur(10px);
+    box-shadow: 0 4px 20px var(--shadow-color);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.container-economia:hover,
+.container-economia:active {
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.2);
+    transform: translateY(-3px);
 }
 
 .container-economia span {
@@ -122,9 +125,6 @@
     opacity: .9;
 }
 
-/* =========================
-   RESPONSIVIDADE
-========================= */
 
 @media (max-width: 480px) {
     .icon-notificacao {
