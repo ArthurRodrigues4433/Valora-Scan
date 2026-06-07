@@ -14,7 +14,7 @@ export default function AppRoutes() {
 
             <Route element={<PrivateRoute />}>
                 <Route path="/home" element={<Home />} />
-                <Route path="/scan" element={<Scan />} />
+                <Route path="/feiras" element={<Scan />} />
             </Route>
         </Routes>
     )

@@ -6,6 +6,7 @@ from app.models.feira import Feira
 from app.models.nota_fiscal import NotaFiscal
 from app.models.nota_fiscal_item import NotaFiscalItem
 
+
 def calcular_economia_mensal(usuario_id: int, session: Session):
     agora = datetime.utcnow()
     primeiro_dia_mes = agora.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
@@ -61,11 +62,6 @@ def calcular_economia_mensal(usuario_id: int, session: Session):
         "itens_escaneados": int(itens_escaneados),  # <-- adicionar
     }
 
-from datetime import datetime, timedelta
-from app.models.nota_fiscal_item import NotaFiscalItem
-from app.models.nota_fiscal import NotaFiscal
-from app.models.feira import Feira
-
 
 def listar_ultimos_scans(
     usuario_id: int, session: Session, limit: int = 5
@@ -85,7 +81,7 @@ def listar_ultimos_scans(
 
     for item in scans_db:
         diff = agora - item.created_at
-        if diff < timedelta(minutes=1): #type: ignore
+        if diff < timedelta(minutes=1):  # type: ignore
             tempo_str = "Agora"
         elif diff < timedelta(hours=1):  # type: ignore
             mins = int(diff.total_seconds() / 60)

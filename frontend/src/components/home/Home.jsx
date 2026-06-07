@@ -17,7 +17,6 @@ const Home = () => {
                 <FeiraList />
                 <ScanList />
             </div>
-            <FloatingButton />
             <BottomNav />
         </div>
     );

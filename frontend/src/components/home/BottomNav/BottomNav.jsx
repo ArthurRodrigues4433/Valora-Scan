@@ -1,13 +1,13 @@
 import "./BottomNav.css";
 import { NavLink } from "react-router-dom";
 import { IoHomeOutline } from "react-icons/io5";
-import { AiOutlineScan } from "react-icons/ai";
+import { BsCart4 } from "react-icons/bs";
 import { IoTimeOutline } from "react-icons/io5";
 import { RxAvatar } from "react-icons/rx";
 
 const bottomNavData = [
     { id: 1, icon: <IoHomeOutline />, label: "Home", to: "/home" },
-    { id: 2, icon: <AiOutlineScan />, label: "Scan", to: "/scan" },
+    { id: 2, icon: <BsCart4 />, label: "Feira", to: "/feiras" },
     { id: 3, icon: <IoTimeOutline />, label: "Histórico", to: "/historico" },
     { id: 4, icon: <RxAvatar />, label: "Perfil", to: "/perfil" },
 ];
