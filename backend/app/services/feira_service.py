@@ -3,7 +3,9 @@ from decimal import Decimal
 from sqlalchemy import func
 from app.models.feira import Feira
 from app.models.nota_fiscal import NotaFiscal
+from app.models.feira_item import FeiraItem
 from datetime import datetime
+from typing import List
 
 
 def listar_feiras_resumo(usuario_id: int, session: Session) -> list[dict]:
@@ -43,3 +45,47 @@ def listar_feiras_resumo(usuario_id: int, session: Session) -> list[dict]:
         )
 
     return result
+
+
+def obter_feira_detalhe(feira_id: int, usuario_id: int, session: Session) -> dict:
+    feira_db = session.query(Feira).filter(Feira.id == feira_id).first()
+    if not feira_db:
+        raise ValueError("Feira não encontrada")
+    if feira_db.usuario_id != usuario_id:
+        raise ValueError("Acesso negado")
+
+    gasto_total = float(feira_db.orcamento)
+    
+    if feira_db.created_at.date() == datetime.utcnow().date():
+        data_str = f"Hoje, {feira_db.created_at.strftime('%H:%M')}"
+    else:
+        data_str = feira_db.created_at.strftime("%a, %H:%M")
+
+    itens_db = session.query(FeiraItem).filter(FeiraItem.feira_id == feira_id).all()
+    
+    itens = []
+    for item in itens_db:
+        preco = float(item.preco_escolhido)
+        preco_normal = float(item.preco_varejo)
+        economia = max(0, preco_normal - preco) if preco_normal > preco else 0.0
+        tipo = "atacado" if item.preco_atacado and float(item.preco_atacado) <= float(item.preco_varejo) else "varejo"
+        
+        itens.append({
+            "id": item.id,
+            "nome": item.nome,
+            "preco": preco,
+            "economia": economia,
+            "tempo": item.created_at.strftime("%H:%M"),
+            "tipo": tipo,
+            "quantidade": item.quantidade,
+        })
+
+    return {
+        "id": feira_db.id,
+        "nome": feira_db.nome,
+        "data": data_str,
+        "gasto_total": gasto_total,
+        "status": feira_db.status,
+        "itensScaneados": len(itens),
+        "itens": itens,
+    }
