@@ -1,8 +1,15 @@
+import { useNavigate } from "react-router-dom";
 import "./FeiraCard.css";
 
-const FeiraCard = ({ nome, data, economia, gastoAtual, gastoTotal, progresso }) => {
+const FeiraCard = ({ id, nome, data, economia, gastoAtual, gastoTotal, progresso }) => {
+    const navigate = useNavigate();
+
+    const handleClick = () => {
+        navigate(`/feira/${id}`);
+    };
+
     return (
-        <div className="card-feira">
+        <div className="card-feira" onClick={handleClick}>
             <div className="linha-topo">
                 <div>
                     <h4>{nome}</h4>

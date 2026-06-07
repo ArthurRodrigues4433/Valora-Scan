@@ -1,9 +1,10 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { FiImage } from 'react-icons/fi'
 import './Scan.css'
 
 const Scan = () => {
+    const { id } = useParams()
     const [capturing, setCapturing] = useState(false)
     const navigate = useNavigate()
 
@@ -17,7 +18,7 @@ const Scan = () => {
     }
 
     const handleCancel = () => {
-        navigate('/home')
+        navigate(`/feira/${id}`)
     }
 
     return (

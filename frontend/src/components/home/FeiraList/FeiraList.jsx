@@ -47,6 +47,7 @@ const FeiraList = () => {
             {feiras.map((feira) => (
                 <FeiraCard
                     key={feira.id}
+                    id={feira.id}
                     nome={feira.nome}
                     data={feira.data}
                     economia={feira.economia.toFixed(2).replace('.', ',')}

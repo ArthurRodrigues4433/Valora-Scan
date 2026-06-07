@@ -1,0 +1,239 @@
+/* =========================
+   CONTAINER PRINCIPAL
+========================= */
+
+.feira-detalhe-container {
+    padding: 16px;
+    min-height: calc(100vh - 80px);
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.feira-detalhe-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.btn-back {
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    color: var(--text-color);
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+}
+
+.feira-detalhe-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-color);
+    margin: 0;
+    flex: 1;
+}
+
+/* =========================
+   INFO DA FEIRA
+========================= */
+
+.feira-detalhe-info {
+    background: var(--bg-color);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 12px var(--shadow-color);
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    font-size: 14px;
+    color: #888;
+}
+
+.info-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+/* =========================
+   BOTÃO SCAN
+========================= */
+
+.btn-scan-novo {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 14px 20px;
+    background: var(--primary-color);
+    color: #fff;
+    border: none;
+    border-radius: 24px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(47, 141, 63, 0.3);
+    transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+    margin-bottom: 24px;
+}
+
+.btn-scan-novo:hover {
+    background: #267832;
+    box-shadow: 0 6px 20px rgba(47, 141, 63, 0.4);
+}
+
+.btn-scan-novo:active {
+    transform: translateY(-2px) scale(0.98);
+}
+
+/* =========================
+   ITENS DA FEIRA
+========================= */
+
+.itens-section {
+    background: var(--bg-color);
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 2px 12px var(--shadow-color);
+}
+
+.itens-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-color);
+    margin: 0 0 16px 0;
+}
+
+.itens-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* =========================
+   CARD ITEM
+========================= */
+
+.card-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: var(--border-color);
+    border-radius: 12px;
+    transition: background 0.2s;
+}
+
+.card-item:hover {
+    background: #e0e0e0;
+}
+
+.item-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.icone-item {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: var(--primary-color);
+    opacity: 0.7;
+}
+
+.item-info h4 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-color);
+    margin: 0;
+}
+
+.item-info small {
+    color: #888;
+    font-size: 11px;
+}
+
+.item-tipo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.item-tipo span {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
+.item-quantidade {
+    color: #666;
+    background: #f0f0f0;
+}
+
+.item-preco {
+    text-align: right;
+}
+
+.item-preco strong {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-color);
+    display: block;
+}
+
+.item-preco span {
+    font-size: 11px;
+    color: var(--primary-color);
+}
+
+/* =========================
+   STATUS
+========================= */
+
+.feira-status {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* =========================
+   RESPONSIVIDADE
+========================= */
+
+@media (max-width: 420px) {
+    .feira-detalhe-container {
+        padding: 10px;
+    }
+}
+
+@media (min-width: 768px) {
+    .feira-detalhe-container {
+        max-width: 680px;
+        margin: 0 auto;
+    }
+}

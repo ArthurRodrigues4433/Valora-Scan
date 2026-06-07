@@ -4,6 +4,7 @@ import Home from "../components/home/Home";
 import Register from "../components/register/Register";
 import Scan from "../components/scanner/Scan";
 import Feira from "../components/feira/Feira";
+import FeiraDetalhe from "../components/feira/FeiraDetalhe/FeiraDetalhe";
 import PrivateRoute from "../components/auth/PrivateRoute";
 
 export default function AppRoutes() {
@@ -14,6 +15,8 @@ export default function AppRoutes() {
             <Route element={<PrivateRoute />}>
                 <Route path="/home" element={<Home />} />
                 <Route path="/feiras" element={<Feira />} />
+                <Route path="/feira/:id" element={<FeiraDetalhe />} />
+                <Route path="/feira/:id/scan" element={<Scan />} />
             </Route>
         </Routes>
     )

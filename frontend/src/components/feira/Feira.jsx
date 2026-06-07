@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import "./Feira.css";
 import { IoAdd } from "react-icons/io5";
+import { useNavigate } from "react-router-dom";
 import api from "../../services/api";
 
 const STATUS_CONFIG = {
@@ -11,25 +12,50 @@ const STATUS_CONFIG = {
     pausada: { label: "Pausada", color: "#e6a817", bg: "rgba(230, 168, 23, 0.1)" },
 };
 
+const FeiraCardItem = ({ feira, onClick }) => {
+    const status = STATUS_CONFIG[feira.status] || STATUS_CONFIG.finalizada;
+    return (
+        <div className="card-feira" key={feira.id} onClick={() => onClick(feira.id)}>
+            <div className="linha-topo">
+                <div>
+                    <h4>{feira.nome}</h4>
+                    <small>{feira.data}</small>
+                </div>
+                <span
+                    className="feira-status"
+                    style={{ color: status.color, backgroundColor: status.bg }}
+                >
+                    {status.label}
+                </span>
+            </div>
+            <div className="linha-valores">
+                <span>Gasto</span>
+                <span>{`R$ ${feira.gasto_atual.toFixed(2).replace('.', ',')} / R$ ${feira.gasto_total.toFixed(2).replace('.', ',')}`}</span>
+            </div>
+            <div className="feira-header-valores">
+                <span className="economia-label">Economia</span>
+                <strong className="economia-value">{`R$ ${feira.economia.toFixed(2).replace('.', ',')}`}</strong>
+            </div>
+        </div>
+    );
+};
 
 const Feira = () => {
     const [feiras, setFeiras] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [usingMock, setUsingMock] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [nome, setNome] = useState("");
     const [orcamento, setOrcamento] = useState("");
     const [saving, setSaving] = useState(false);
+    const navigate = useNavigate();
 
     const fetchFeiras = async () => {
         try {
             const response = await api.get("/feiras/feira/resumo");
             setFeiras(response.data);
-            setUsingMock(false);
         } catch (error) {
             console.warn("API indisponível, exibindo estado vazio:", error.message);
             setFeiras([]);
-            setUsingMock(true);
         } finally {
             setLoading(false);
         }
@@ -43,7 +69,7 @@ const Feira = () => {
         if (!nome.trim() || !orcamento) return;
         setSaving(true);
         try {
-            await api.post("/feiras/feira", {
+            const response = await api.post("/feiras/feira", {
                 nome: nome.trim(),
                 orcamento: parseFloat(orcamento),
             });
@@ -51,6 +77,7 @@ const Feira = () => {
             setNome("");
             setOrcamento("");
             await fetchFeiras();
+            navigate(`/feira/${response.data.id}`);
         } catch (error) {
             console.error("Erro ao criar feira:", error);
             alert(error.response?.data?.detail || "Erro ao criar feira");
@@ -64,9 +91,6 @@ const Feira = () => {
         setNome("");
         setOrcamento("");
     };
-
-    const getStatusConfig = (status) =>
-        STATUS_CONFIG[status] || STATUS_CONFIG.finalizada;
 
     if (loading) {
         return (
@@ -140,33 +164,13 @@ const Feira = () => {
                                 <div className="feira-section">
                                     <h4 className="feira-section-title">{titulo}</h4>
                                     <div className="feira-section-list">
-                                        {lista.map((feira) => {
-                                            const status = getStatusConfig(feira.status);
-                                            return (
-                                                <div className="card-feira" key={feira.id}>
-                                                    <div className="linha-topo">
-                                                        <div>
-                                                            <h4>{feira.nome}</h4>
-                                                            <small>{feira.data}</small>
-                                                        </div>
-                                                        <span
-                                                            className="feira-status"
-                                                            style={{ color: status.color, backgroundColor: status.bg }}
-                                                        >
-                                                            {status.label}
-                                                        </span>
-                                                    </div>
-                                                    <div className="linha-valores">
-                                                        <span>Gasto</span>
-                                                        <span>{`R$ ${feira.gasto_atual.toFixed(2).replace('.', ',')} / R$ ${feira.gasto_total.toFixed(2).replace('.', ',')}`}</span>
-                                                    </div>
-                                                    <div className="feira-header-valores">
-                                                        <span className="economia-label">Economia</span>
-                                                        <strong className="economia-value">{`R$ ${feira.economia.toFixed(2).replace('.', ',')}`}</strong>
-                                                    </div>
-                                                </div>
-                                            );
-                                        })}
+                                        {lista.map((feira) => (
+                                            <FeiraCardItem
+                                                key={feira.id}
+                                                feira={feira}
+                                                onClick={(id) => navigate(`/feira/${id}`)}
+                                            />
+                                        ))}
                                     </div>
                                 </div>
                             );
