@@ -1,0 +1,430 @@
+/* =========================
+   CONTAINER PRINCIPAL
+========================= */
+
+.feira-container {
+    padding: 16px;
+    min-height: calc(100vh - 80px);
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.feira-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.feira-header-alert {
+    margin-top: -8px;
+    margin-bottom: 12px;
+    font-size: 12px;
+    color: #888;
+}
+
+.feira-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+/* =========================
+   BOTÃO NOVA FEIRA
+========================= */
+
+.btn-nova-feira {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 20px;
+    background: var(--primary-color);
+    color: #fff;
+    border: none;
+    border-radius: 24px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(47, 141, 63, 0.3);
+    transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+    user-select: none;
+}
+
+.btn-nova-feira:hover:not(:disabled) {
+    background: #267832;
+    box-shadow: 0 6px 20px rgba(47, 141, 63, 0.4);
+}
+
+.btn-nova-feira:active:not(:disabled) {
+    transform: translateY(-3px) scale(1.04);
+    box-shadow: 0 8px 24px rgba(47, 141, 63, 0.45);
+}
+
+.btn-nova-feira:disabled {
+    background: #a0c8a8;
+    cursor: not-allowed;
+    opacity: 0.6;
+    box-shadow: none;
+}
+
+.feira-header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+}
+
+.btn-nova-feira-helper {
+    font-size: 11px;
+    color: #888;
+    margin-top: 4px;
+    text-align: right;
+}
+
+.btn-nova-feira svg {
+    font-size: 18px;
+}
+
+/* =========================
+   LISTA DE FEIRAS
+========================= */
+
+.feira-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.feira-section-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-color);
+    margin: 0 0 10px 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.feira-section-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* =========================
+   CARD DE FEIRA (estilo igual FeiraCard/ScanCard)
+========================= */
+
+.card-feira {
+    background: var(--bg-color);
+    border-radius: 18px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 2px 12px var(--shadow-color);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+    cursor: pointer;
+    user-select: none;
+}
+
+.card-feira:hover,
+.card-feira:active {
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
+    transform: translateY(-3px);
+}
+
+/* =========================
+   CONTEÚDO DO CARD
+========================= */
+
+.linha-topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 6px;
+}
+
+.linha-topo h4 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.linha-topo small {
+    color: #888;
+    font-size: 12px;
+}
+
+.feira-status {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    letter-spacing: 0.2px;
+}
+
+/* =========================
+   VALORES E ECONOMIA
+========================= */
+
+.linha-valores {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 0;
+    font-size: 13px;
+    color: var(--text-color);
+}
+
+.feira-header-valores {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.economia-label {
+    font-size: 13px;
+    color: #888;
+}
+
+.economia-value {
+    color: var(--primary-color);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+/* =========================
+   VALORES E ECONOMIA
+========================= */
+
+.barra {
+    width: 100%;
+    height: 6px;
+    background: var(--border-color);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.progresso {
+    height: 100%;
+    background: var(--primary-color);
+    border-radius: 999px;
+    transition: width 0.4s ease;
+}
+
+/* =========================
+   ESTADO VAZIO
+========================= */
+
+.feira-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 60px 20px;
+    background: var(--bg-color);
+    border-radius: 16px;
+    box-shadow: 0 2px 10px var(--shadow-color);
+    border: 1px solid var(--border-color);
+}
+
+.feira-empty .empty-icon {
+    color: var(--border-color);
+    margin-bottom: 16px;
+}
+
+.feira-empty h4 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 6px;
+}
+
+.feira-empty p {
+    font-size: 14px;
+    color: var(--border-color);
+    margin-bottom: 20px;
+    max-width: 280px;
+    line-height: 1.4;
+}
+
+.btn-empty {
+    margin-top: 0;
+}
+
+/* =========================
+   LOADING
+========================= */
+
+.loading-state {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 20px;
+}
+
+.spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid var(--border-color);
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* =========================
+   MODAL / POPUP
+========================= */
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    padding: 20px;
+    animation: fadeIn 0.2s ease;
+}
+
+.modal-box {
+    background: var(--bg-color);
+    border-radius: 20px;
+    padding: 24px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+    border: 1px solid var(--border-color);
+    animation: slideUp 0.25s ease;
+}
+
+.modal-box h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 18px;
+}
+
+.modal-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 14px;
+}
+
+.modal-field label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.modal-field input {
+    padding: 10px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-color);
+    font-size: 14px;
+    color: var(--text-color);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.modal-field input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(47, 141, 63, 0.12);
+}
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.modal-actions button {
+    flex: 1;
+    padding: 10px;
+    border-radius: 24px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: transform 0.15s, box-shadow 0.2s, background 0.2s;
+}
+
+.btn-cancelar {
+    background: #f0f0f0;
+    color: var(--text-color);
+}
+
+.btn-cancelar:hover {
+    background: #e0e0e0;
+}
+
+.btn-criar {
+    background: var(--primary-color);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(47, 141, 63, 0.3);
+}
+
+.btn-criar:hover {
+    background: #267832;
+    box-shadow: 0 6px 18px rgba(47, 141, 63, 0.4);
+}
+
+.btn-criar:active,
+.btn-cancelar:active {
+    transform: translateY(-2px) scale(0.98);
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* =========================
+   RESPONSIVIDADE
+========================= */
+
+@media (max-width: 420px) {
+    .feira-container {
+        padding: 10px;
+    }
+
+    .card-feira {
+        padding: 14px;
+    }
+
+    .feira-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .btn-nova-feira {
+        justify-content: center;
+    }
+}
+
+@media (min-width: 768px) {
+    .feira-container {
+        max-width: 680px;
+        margin: 0 auto;
+    }
+}

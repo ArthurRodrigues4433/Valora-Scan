@@ -1,5 +1,5 @@
 import "./BottomNav.css";
-import { NavLink } from "react-router-dom";
+import { useState } from "react";
 import { IoHomeOutline } from "react-icons/io5";
 import { BsCart4 } from "react-icons/bs";
 import { IoTimeOutline } from "react-icons/io5";
@@ -12,18 +12,17 @@ const bottomNavData = [
     { id: 4, icon: <RxAvatar />, label: "Perfil", to: "/perfil" },
 ];
 
-const BottomNav = () => {
+const BottomNav = ({ activeId = 1, onChange }) => {
     return (
         <section className="bottom-nav">
             {bottomNavData.map((action) => (
-                <NavLink
+                <div
                     key={action.id}
-                    to={action.to}
-                    className={({ isActive }) => "card-nav" + (isActive ? " active" : "")}
-                    end
+                    className={"card-nav" + (activeId === action.id ? " active" : "")}
+                    onClick={() => onChange && onChange(action.id)}
                 >
                     <QuickBottomNav icon={action.icon} label={action.label} />
-                </NavLink>
+                </div>
             ))}
         </section>
     );

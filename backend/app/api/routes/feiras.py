@@ -29,14 +29,24 @@ async def criar_feira(
     feira_db = session.query(Feira).filter(Feira.nome == feiraSchema.nome).first()  # type: ignore
     if feira_db:
         raise HTTPException(status_code=400, detail="Feira já existe")
-    else:
-        nova_feira = Feira(
-            nome=feiraSchema.nome,
-            orcamento=feiraSchema.orcamento,
-            usuario_id=usuario.id,
-        )  # type: ignore
-        session.add(nova_feira)
-        session.commit()
+
+    feira_ativa = session.query(Feira).filter(  # type: ignore
+        Feira.usuario_id == usuario.id,
+        Feira.status.in_(["em_andamento", "pausada"]),
+    ).first()
+    if feira_ativa:
+        raise HTTPException(
+            status_code=400,
+            detail="Você não pode criar uma nova feira enquanto houver uma feira ativa (em andamento ou pausada). Finalize ou cancele a feira atual primeiro.",
+        )
+
+    nova_feira = Feira(
+        nome=feiraSchema.nome,
+        orcamento=feiraSchema.orcamento,
+        usuario_id=usuario.id,
+    )  # type: ignore
+    session.add(nova_feira)
+    session.commit()
 
     return {"message": "Feira criada com sucesso"}
 

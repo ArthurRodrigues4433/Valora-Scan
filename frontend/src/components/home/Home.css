@@ -36,6 +36,22 @@ body,
 }
 
 /* =========================
+   PERFIL (TELA GENÉRICA)
+========================= */
+
+.perfil-generico {
+    padding: 24px;
+}
+
+.perfil-generico h2 {
+    margin-bottom: 8px;
+}
+
+.perfil-generico p {
+    color: #666;
+}
+
+/* =========================
    CELULARES PEQUENOS
 ========================= */
 

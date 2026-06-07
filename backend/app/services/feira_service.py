@@ -34,6 +34,7 @@ def listar_feiras_resumo(usuario_id: int, session: Session) -> list[dict]:
                 "id": feira.id,
                 "nome": feira.nome,
                 "data": data_str,
+                "status": feira.status,
                 "economia": round(economia, 2),
                 "gasto_atual": float(gasto_real),
                 "gasto_total": float(orcamento),

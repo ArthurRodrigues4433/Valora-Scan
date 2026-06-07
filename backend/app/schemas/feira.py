@@ -29,6 +29,8 @@ class FeiraSchema(BaseModel):
 class FeiraResumoSchema(BaseModel):
     id: int
     nome: str
+    data: str
+    status: str
     economia: float
     gasto_atual: float
     gasto_total: float
