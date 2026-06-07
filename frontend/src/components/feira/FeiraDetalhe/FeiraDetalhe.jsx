@@ -36,7 +36,7 @@ const FeiraDetalhe = () => {
     };
 
     const handleScanProduct = () => {
-        navigate(`/scan/${id}`);
+        navigate(`/feira/${id}/scan`);
     };
 
     const handleFinalizar = async () => {
