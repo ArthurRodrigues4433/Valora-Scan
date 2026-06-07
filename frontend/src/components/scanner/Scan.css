@@ -1,0 +1,119 @@
+.scanner-container {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: #1a1a1a;
+    padding: 20px;
+}
+
+.scanner-header {
+    text-align: center;
+    padding: 16px 0;
+}
+
+.scanner-header h1 {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--bg-color);
+    margin: 0;
+}
+
+.scanner-capture-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px 0;
+}
+
+.capture-frame {
+    width: 90%;
+    max-width: 320px;
+    height: 200px;
+    border: 2px solid var(--primary-color);
+    border-radius: 12px;
+    background: transparent;
+    margin-bottom: 16px;
+}
+
+.instruction-text {
+    font-size: 14px;
+    color: var(--bg-color);
+    text-align: center;
+    margin: 0;
+    opacity: 0.8;
+}
+
+.scanner-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 30px;
+    padding-bottom: env(safe-area-inset-bottom, 20px);
+}
+
+.gallery-button {
+    background: none;
+    border: none;
+    padding: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gallery-button svg {
+    width: 28px;
+    height: 28px;
+    color: var(--bg-color);
+}
+
+.capture-button {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: var(--bg-color);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px var(--shadow-color);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.capture-button:hover {
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.capture-button:active {
+    transform: scale(0.95) translateY(2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.cancel-button {
+    background: none;
+    border: none;
+    padding: 12px;
+    cursor: pointer;
+    font-size: 16px;
+    color: var(--bg-color);
+    font-weight: 500;
+}
+
+@media (max-width: 480px) {
+    .scanner-container {
+        padding: 16px;
+    }
+
+    .capture-frame {
+        height: 180px;
+    }
+
+    .capture-button {
+        width: 60px;
+        height: 60px;
+    }
+}

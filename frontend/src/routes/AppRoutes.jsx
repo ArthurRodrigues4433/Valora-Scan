@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import Login from "../components/login/Login";
 import Home from "../components/home/Home";
 import Register from "../components/register/Register";
+import Scan from "../components/scanner/Scan";
 import PrivateRoute from "../components/auth/PrivateRoute";
 
 export default function AppRoutes() {
@@ -13,6 +14,7 @@ export default function AppRoutes() {
 
             <Route element={<PrivateRoute />}>
                 <Route path="/home" element={<Home />} />
+                <Route path="/scan" element={<Scan />} />
             </Route>
         </Routes>
     )
