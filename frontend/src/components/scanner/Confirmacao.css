@@ -1,0 +1,312 @@
+/* =========================
+   CONTAINER PRINCIPAL
+========================= */
+
+.confirmacao-container {
+    min-height: 100vh;
+    background: #f5f6f8;
+    padding: 16px;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.confirmacao-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.confirmacao-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-color);
+    margin: 0;
+    flex: 1;
+}
+
+.confianca-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    background: rgba(47, 141, 63, 0.1);
+    color: var(--primary-color);
+    white-space: nowrap;
+}
+
+/* =========================
+   PREVIEW DO PRODUTO
+========================= */
+
+.produto-preview {
+    background: var(--bg-color);
+    border-radius: 16px;
+    padding: 12px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 12px var(--shadow-color);
+    display: flex;
+    justify-content: center;
+}
+
+.preview-image {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 12px;
+    object-fit: contain;
+}
+
+/* =========================
+   FORMULÁRIO
+========================= */
+
+.confirmacao-form {
+    background: var(--bg-color);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 2px 12px var(--shadow-color);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-row {
+    display: flex;
+    gap: 12px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+.form-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #666;
+}
+
+.form-input {
+    padding: 12px 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    font-size: 15px;
+    color: var(--text-color);
+    background: #fafafa;
+    transition: border-color 0.2s, background 0.2s;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.form-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    background: var(--bg-color);
+}
+
+.form-input::placeholder {
+    color: #aaa;
+}
+
+/* =========================
+   RESUMO DO PREÇO
+========================= */
+
+.preco-resumo {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.preco-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.preco-row.destacado {
+    padding-top: 8px;
+    border-top: 1px solid var(--border-color);
+    margin-top: 4px;
+}
+
+.preco-label {
+    font-size: 14px;
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.preco-valor {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-color);
+    white-space: nowrap;
+}
+
+.preco-row.destacado .preco-valor {
+    color: var(--primary-color);
+    font-size: 18px;
+}
+
+/* =========================
+   AÇÕES
+========================= */
+
+.confirmacao-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.btn-cancelar {
+    flex: 1;
+    padding: 14px 20px;
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 24px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #666;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+
+.btn-cancelar:hover {
+    background: #f0f0f0;
+}
+
+.btn-cancelar:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-confirmar {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 20px;
+    background: var(--primary-color);
+    color: #fff;
+    border: none;
+    border-radius: 24px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(47, 141, 63, 0.3);
+    transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.btn-confirmar:hover {
+    background: #267832;
+    box-shadow: 0 6px 20px rgba(47, 141, 63, 0.4);
+}
+
+.btn-confirmar:active {
+    transform: translateY(-2px) scale(0.98);
+}
+
+.btn-confirmar:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* =========================
+   RESPONSIVIDADE
+========================= */
+
+@media (max-width: 360px) {
+    .confirmacao-container {
+        padding: 8px;
+    }
+    
+    .confirmacao-form {
+        padding: 14px;
+    }
+    
+    .confirmacao-header {
+        flex-wrap: nowrap;
+        gap: 8px;
+    }
+    
+    .confirmacao-title {
+        font-size: 18px;
+    }
+    
+    .confianca-badge {
+        font-size: 10px;
+        padding: 3px 6px;
+    }
+    
+    .preview-image {
+        max-height: 140px;
+    }
+    
+    .form-input {
+        padding: 10px 12px;
+        font-size: 14px;
+    }
+    
+    .form-label {
+        font-size: 12px;
+    }
+    
+    .preco-label {
+        font-size: 13px;
+    }
+    
+    .preco-valor {
+        font-size: 15px;
+    }
+    
+    .preco-row.destacado .preco-valor {
+        font-size: 16px;
+    }
+    
+    .btn-cancelar,
+    .btn-confirmar {
+        padding: 12px 16px;
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 420px) {
+    .confirmacao-container {
+        padding: 10px;
+    }
+    
+    .confirmacao-form {
+        padding: 16px;
+    }
+    
+    .form-row {
+        flex-direction: column;
+        gap: 16px;
+    }
+    
+    .preview-image {
+        max-height: 150px;
+    }
+}
+
+@media (min-width: 768px) {
+    .confirmacao-container {
+        max-width: 680px;
+        margin: 0 auto;
+    }
+}

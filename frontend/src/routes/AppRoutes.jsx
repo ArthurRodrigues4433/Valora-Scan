@@ -3,6 +3,7 @@ import Login from "../components/login/Login";
 import Home from "../components/home/Home";
 import Register from "../components/register/Register";
 import Scan from "../components/scanner/Scan";
+import Confirmacao from "../components/scanner/Confirmacao";
 import Feira from "../components/feira/Feira";
 import FeiraDetalhe from "../components/feira/FeiraDetalhe/FeiraDetalhe";
 import PrivateRoute from "../components/auth/PrivateRoute";
@@ -17,6 +18,7 @@ export default function AppRoutes() {
                 <Route path="/feiras" element={<Feira />} />
                 <Route path="/feira/:id" element={<FeiraDetalhe />} />
                 <Route path="/feira/:id/scan" element={<Scan />} />
+                <Route path="/feira/:id/confirmar" element={<Confirmacao />} />
             </Route>
         </Routes>
     )
