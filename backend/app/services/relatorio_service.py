@@ -5,6 +5,7 @@ from decimal import Decimal
 from app.models.feira import Feira
 from app.models.nota_fiscal import NotaFiscal
 from app.models.nota_fiscal_item import NotaFiscalItem
+from app.models.feira_item import FeiraItem
 
 
 def calcular_economia_mensal(usuario_id: int, session: Session):
@@ -67,11 +68,10 @@ def listar_ultimos_scans(
     usuario_id: int, session: Session, limit: int = 5
 ) -> list[dict]:
     scans_db = (
-        session.query(NotaFiscalItem)
-        .join(NotaFiscal, NotaFiscalItem.nota_fiscal_id == NotaFiscal.id)
-        .join(Feira, NotaFiscal.feira_id == Feira.id)
+        session.query(FeiraItem)
+        .join(Feira, FeiraItem.feira_id == Feira.id)
         .filter(Feira.usuario_id == usuario_id)
-        .order_by(NotaFiscalItem.created_at.desc())
+        .order_by(FeiraItem.created_at.desc())
         .limit(limit)
         .all()
     )
@@ -93,12 +93,16 @@ def listar_ultimos_scans(
             dias = diff.days
             tempo_str = f"{dias}d atrás"
 
+        preco = float(item.preco_escolhido)
+        preco_normal = float(item.preco_varejo)
+        economia = max(0, preco_normal - preco) if preco_normal > preco else 0.0
+
         result.append(
             {
                 "id": item.id,
-                "nome": item.produto_nome,
-                "preco": float(item.preco_total),  # type: ignore
-                "economia": float(item.diferenca) if item.diferenca else 0.0,  # type: ignore
+                "nome": item.nome,
+                "preco": preco,
+                "economia": economia,
                 "tempo": tempo_str,
             }
         )

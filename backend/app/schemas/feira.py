@@ -6,11 +6,15 @@ from datetime import datetime
 class FeiraItemDetalheSchema(BaseModel):
     id: int
     nome: str
-    preco: float
-    economia: float
+    preco_escolhido: float
+    preco_varejo: float
+    preco_atacado: Optional[float]
+    qtd_minima_atacado: int
+    quantidade: int
+    subtotal: float
+    unidade_medida: str
     tempo: str
     tipo: str
-    quantidade: int
 
     model_config = ConfigDict(from_attributes=True)
 

@@ -44,7 +44,7 @@ const FeiraDetalhe = () => {
             setFinalizing(true);
             try {
                 await api.put(`/feiras/feira/${id}`, { status: "finalizada" });
-                setFeira({ ...feira, status: "finalizada" });
+                setFeira(prev => ({ ...prev, status: "finalizada" }));
             } catch (error) {
                 console.error("Erro ao finalizar feira:", error);
                 alert("Erro ao finalizar feira");
@@ -59,110 +59,94 @@ const FeiraDetalhe = () => {
     }, [id]);
 
     const feiraData = feira || {};
-    
-    if (loading) {
-        return (
-            <div className="feira-detalhe-container">
-                <div className="loading-state">
-                    <div className="spinner"></div>
-                </div>
-            </div>
-        );
-    }
-    
-    if (!feira) {
-        return (
-            <div className="feira-detalhe-container">
-                <p>Feira não encontrada</p>
-            </div>
-        );
-    }
-    
-    const gastoParcial = (feira.itens || []).reduce((total, item) => total + item.preco, 0);
-    const economiaParcial = (feira.itens || []).reduce((total, item) => total + (item.economia || 0), 0);
+    const gastoParcial = (feiraData.itens || []).reduce((total, item) => total + (item.preco_escolhido || 0), 0);
+    const economiaParcial = (feiraData.itens || []).reduce((total, item) => total + ((item.preco_varejo || 0) - (item.preco_escolhido || 0)), 0);
     
     const getStatusConfig = (status) =>
         STATUS_CONFIG[status] || STATUS_CONFIG.finalizada;
 
     return (
         <div className="feira-detalhe-container">
-            <div className="feira-detalhe-content">
-                <div className="feira-detalhe-header">
-                    <button className="btn-back" onClick={handleBack}>
-                        <IoArrowBack />
+            {loading ? (
+                <div className="loading-container">
+                    <p>Carregando...</p>
+                </div>
+            ) : (
+                <div className="feira-detalhe-content">
+                    <div className="feira-detalhe-header">
+                        <button className="btn-back" onClick={handleBack}>
+                            <IoArrowBack />
+                        </button>
+                        <h2 className="feira-detalhe-title">{feiraData.nome}</h2>
+                        <span
+                            className="feira-status"
+                            style={{ color: getStatusConfig(feiraData.status).color, backgroundColor: getStatusConfig(feiraData.status).bg }}
+                        >
+                            {getStatusConfig(feiraData.status).label}
+                        </span>
+                    </div>
+
+                    <div className="feira-detalhe-info">
+                        <div className="info-row">
+                            <span className="info-label">Data</span>
+                            <span className="info-value">{feiraData.data}</span>
+                        </div>
+                        <div className="info-row">
+                            <span className="info-label">Itens scaneados</span>
+                            <span className="info-value">{feiraData.itensScaneados}</span>
+                        </div>
+                        <div className="info-row">
+                            <span className="info-label">Valor total da feira</span>
+                            <span className="info-value">R$ {(feiraData.gasto_total || 0).toFixed(2).replace('.', ',')}</span>
+                        </div>
+                        <div className="info-row">
+                            <span className="info-label">Gasto parcial</span>
+                            <span className="info-value">R$ {gastoParcial.toFixed(2).replace('.', ',')}</span>
+                        </div>
+                        <div className="info-row">
+                            <span className="info-label">Economia parcial</span>
+                            <span className="info-value">R$ {economiaParcial.toFixed(2).replace('.', ',')}</span>
+                        </div>
+                    </div>
+
+                    <button className="btn-scan-novo" onClick={handleScanProduct}>
+                        <IoScan /> Escanear novo produto
                     </button>
-                    <h2 className="feira-detalhe-title">{feira.nome}</h2>
-                    <span
-                        className="feira-status"
-                        style={{ color: getStatusConfig(feira.status).color, backgroundColor: getStatusConfig(feira.status).bg }}
-                    >
-                        {getStatusConfig(feira.status).label}
-                    </span>
-                </div>
 
-                <div className="feira-detalhe-info">
-                    <div className="info-row">
-                        <span className="info-label">Data</span>
-                        <span className="info-value">{feira.data}</span>
-                    </div>
-                    <div className="info-row">
-                        <span className="info-label">Itens scaneados</span>
-                        <span className="info-value">{feira.itensScaneados}</span>
-                    </div>
-                    <div className="info-row">
-                        <span className="info-label">Valor total da feira</span>
-                        <span className="info-value">R$ {(feira.gasto_total || 0).toFixed(2).replace('.', ',')}</span>
-                    </div>
-                    <div className="info-row">
-                        <span className="info-label">Gasto parcial</span>
-                        <span className="info-value">R$ {gastoParcial.toFixed(2).replace('.', ',')}</span>
-                    </div>
-                    <div className="info-row">
-                        <span className="info-label">Economia parcial</span>
-                        <span className="info-value">R$ {economiaParcial.toFixed(2).replace('.', ',')}</span>
-                    </div>
-                </div>
-
-                <button className="btn-scan-novo" onClick={handleScanProduct}>
-                    <IoScan /> Escanear novo produto
-                </button>
-
-                <div className="itens-section">
-                    <h3 className="itens-title">Itens da feira</h3>
-                    {(feira.itens && feira.itens.length > 0) ? (
-                        <div className="itens-list">
-                            {feira.itens.map((item) => (
-                                <ItemCard
-                                    key={item.id}
-                                    nome={item.nome}
-                                    preco={item.preco}
-                                    tempo={item.tempo}
-                                    tipo={item.tipo}
-                                    quantidade={item.quantidade}
-                                />
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="itens-empty">
-                            <div className="empty-icon">
-                                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                                    <path d="M3 3h18v18H3zM3 9h18M9 21V9" />
-                                </svg>
+                    <div className="itens-section">
+                        <h3 className="itens-title">Itens da feira</h3>
+                        {(feiraData.itens && feiraData.itens.length > 0) ? (
+                            <div className="itens-list">
+                                {feiraData.itens.map((item) => (
+                                    <ItemCard
+                                        key={item.id}
+                                        nome={item.nome}
+                                        preco={item.preco_escolhido}
+                                        precoVarejo={item.preco_varejo}
+                                        quantidade={item.quantidade}
+                                        tipo={item.tipo}
+                                        unidade={item.unidade_medida}
+                                    />
+                                ))}
                             </div>
-                            <h4>Nenhum item adicionado</h4>
-                            <p>Toque em "Escanear novo produto" para adicionar itens à sua feira</p>
-                        </div>
-                    )}
+                        ) : (
+                            <div className="itens-empty">
+                                <div className="empty-icon">
+                                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                        <path d="M3 3h18v18H3zM3 9h18M9 21V9" />
+                                    </svg>
+                                </div>
+                                <h4>Nenhum item adicionado</h4>
+                                <p>Toque em "Escanear novo produto" para adicionar itens à sua feira</p>
+                            </div>
+                        )}
+                    </div>
                 </div>
-            </div>
+            )}
 
-            {(feira.status === "em_andamento" || feira.status === "pausada") && (
+            {(feiraData.status === "em_andamento" || feiraData.status === "pausada") && (
                 <div className="feira-detalhe-footer">
-                    <button 
-                        className="btn-finalizar-fixed" 
-                        onClick={handleFinalizar}
-                        disabled={finalizing}
-                    >
+                    <button className="btn-finalizar-fixed" onClick={handleFinalizar} disabled={finalizing}>
                         <IoCheckmarkCircle /> {finalizing ? "Finalizando..." : "Finalizar feira"}
                     </button>
                 </div>
@@ -171,7 +155,7 @@ const FeiraDetalhe = () => {
     );
 };
 
-const ItemCard = ({ nome, preco, tempo, tipo, quantidade }) => {
+const ItemCard = ({ nome, preco, precoVarejo, quantidade, tipo, unidade }) => {
     const tipoConfig = {
         atacado: { label: "Atacado", bg: "#2f8d3f", color: "#fff" },
         varejo: { label: "Varejo", bg: "#3498db", color: "#fff" },
@@ -184,12 +168,11 @@ const ItemCard = ({ nome, preco, tempo, tipo, quantidade }) => {
                 <div className="icone-item"></div>
                 <div>
                     <h4>{nome}</h4>
-                    <small>{tempo}</small>
                     <div className="item-tipo">
                         <span style={{ backgroundColor: config.bg, color: config.color }}>
                             {config.label}
                         </span>
-                        <span className="item-quantidade">Quant: {quantidade}</span>
+                        <span className="item-quantidade">Quant: {quantidade} {unidade}</span>
                     </div>
                 </div>
             </div>

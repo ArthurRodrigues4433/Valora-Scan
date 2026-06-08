@@ -7,10 +7,10 @@ class FeiraItemBase(BaseModel):
     nome: str
     categoria: Optional[str] = None
     preco_varejo: float
-    preco_atacado: float
-    qtd_minima_atacado: int
-    quantidade: int
-    unidade_medida: str
+    preco_atacado: Optional[float] = None
+    qtd_minima_atacado: Optional[int] = None
+    quantidade: int = 1
+    unidade_medida: Optional[str] = None
     imagem_url: Optional[str] = None
     ocr_texto: Optional[str] = None
 

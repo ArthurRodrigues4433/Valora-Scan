@@ -7,14 +7,20 @@ from decimal import Decimal
 from sqlalchemy import func
 
 
-def calcular_preco_escolhido(quantidade: int, preco_varejo: Decimal, preco_atacado: Decimal, qtd_minima_atacado: int,) -> float:
+def calcular_preco_escolhido(quantidade: int, preco_varejo: Decimal, preco_atacado: Decimal, qtd_minima_atacado: int) -> float:
     """
     Calcula o preço escolhido com base na quantidade e nos preços de varejo e atacado.
     Se a quantidade for maior ou igual à quantidade mínima para atacado, retorna o preço de atacado, caso contrário, retorna o preço de varejo.
+    Se preco_atacado for 0 ou None, usa sempre o varejo.
     """
-    if quantidade >= qtd_minima_atacado:
+    if float(preco_atacado) > 0 and quantidade >= qtd_minima_atacado:
         return float(preco_atacado)
     return float(preco_varejo)
+
+
+def calcular_preco_escolhido_from_floats(quantidade: int, preco_varejo: float, preco_atacado: float, qtd_minima_atacado: int) -> float:
+    """Wrapper para calcular_preco_escolhido com floats."""
+    return calcular_preco_escolhido(quantidade, Decimal(str(preco_varejo)), Decimal(str(preco_atacado)), qtd_minima_atacado)
 
 
 def calcular_subtotal(quantidade: int, preco_escolhido: Decimal) -> float:
@@ -35,11 +41,14 @@ def criar_item(feira_id: int, item_data: FeiraItemCreate, session: Session) -> F
             status_code=400, detail="Feira já finalizada, não pode ser editada"
         )
 
+    preco_atacado = item_data.preco_atacado or Decimal("0")
+    qtd_minima = item_data.qtd_minima_atacado or 1
+    
     preco_escolhido = calcular_preco_escolhido(
         item_data.quantidade,
-        item_data.preco_varejo,
-        item_data.preco_atacado,
-        item_data.qtd_minima_atacado,
+        Decimal(str(item_data.preco_varejo)),
+        preco_atacado,
+        qtd_minima,
     )
 
     subtotal = calcular_subtotal(item_data.quantidade, Decimal(preco_escolhido))
@@ -47,13 +56,13 @@ def criar_item(feira_id: int, item_data: FeiraItemCreate, session: Session) -> F
     novo_item = FeiraItem(
         nome=item_data.nome,
         categoria=item_data.categoria,
-        preco_varejo=item_data.preco_varejo,
-        preco_atacado=item_data.preco_atacado,
-        qtd_minima_atacado=item_data.qtd_minima_atacado,
+        preco_varejo=Decimal(str(item_data.preco_varejo)),
+        preco_atacado=preco_atacado,
+        qtd_minima_atacado=qtd_minima,
         quantidade=item_data.quantidade,
         preco_escolhido=preco_escolhido,
         subtotal=subtotal,
-        unidade_medida=item_data.unidade_medida,
+        unidade_medida=item_data.unidade_medida or "",
         imagem_url=item_data.imagem_url,
         ocr_texto=item_data.ocr_texto,
         feira_id=feira_id,
@@ -106,35 +115,36 @@ def atualizar_item(feira_id: int, item_id: int, item_data: FeiraItemUpdate, sess
         item.imagem_url = item_data.imagem_url
 
     # Se algum preço mudou, recalcula preco_escolhido e subtotal
-    preco_varejo = (
+    preco_varejo = float(
         item_data.preco_varejo
         if item_data.preco_varejo is not None
         else item.preco_varejo
     )
-    preco_atacado = (
+    preco_atacado_val = float(
         item_data.preco_atacado
         if item_data.preco_atacado is not None
-        else item.preco_atacado
+        else item.preco_atacado or 0
     )
-    qtd_minima_atacado = (
+    qtd_minima_atacado_val = (
         item_data.qtd_minima_atacado
         if item_data.qtd_minima_atacado is not None
-        else item.qtd_minima_atacado
+        else item.qtd_minima_atacado or 1
     )
     quantidade = (
         item_data.quantidade if item_data.quantidade is not None else item.quantidade
     )
 
-    item.preco_varejo = preco_varejo
-    item.preco_atacado = preco_atacado
-    item.qtd_minima_atacado = qtd_minima_atacado
+    item.preco_varejo = Decimal(str(preco_varejo))
+    item.preco_atacado = Decimal(str(preco_atacado_val))
+    item.qtd_minima_atacado = qtd_minima_atacado_val
     item.quantidade = quantidade
 
     # Recalcula preco_escolhido e subtotal
-    item.preco_escolhido = calcular_preco_escolhido(
-        quantidade, preco_varejo, preco_atacado, qtd_minima_atacado
+    preco_escolhido = calcular_preco_escolhido_from_floats(
+        quantidade, preco_varejo, preco_atacado_val, qtd_minima_atacado_val
     )
-    item.subtotal = calcular_subtotal(quantidade, item.preco_escolhido)
+    item.preco_escolhido = preco_escolhido
+    item.subtotal = calcular_subtotal(quantidade, Decimal(str(preco_escolhido)))
 
     session.commit()
     session.refresh(item)

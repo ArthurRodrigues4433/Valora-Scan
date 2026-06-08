@@ -73,11 +73,15 @@ def obter_feira_detalhe(feira_id: int, usuario_id: int, session: Session) -> dic
         itens.append({
             "id": item.id,
             "nome": item.nome,
-            "preco": preco,
-            "economia": economia,
+            "preco_escolhido": preco,
+            "preco_varejo": preco_normal,
+            "preco_atacado": float(item.preco_atacado) if item.preco_atacado else None,
+            "qtd_minima_atacado": item.qtd_minima_atacado,
+            "quantidade": item.quantidade,
+            "subtotal": float(item.subtotal),
+            "unidade_medida": item.unidade_medida,
             "tempo": item.created_at.strftime("%H:%M"),
             "tipo": tipo,
-            "quantidade": item.quantidade,
         })
 
     return {
