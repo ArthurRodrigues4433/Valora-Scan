@@ -7,13 +7,9 @@ from decimal import Decimal
 from sqlalchemy import func
 
 
-def calcular_preco_escolhido(
-    quantidade: int,
-    preco_varejo: Decimal,
-    preco_atacado: Decimal,
-    qtd_minima_atacado: int,
-) -> float:
-    """Calcula o preço escolhido com base na quantidade e nos preços de varejo e atacado.
+def calcular_preco_escolhido(quantidade: int, preco_varejo: Decimal, preco_atacado: Decimal, qtd_minima_atacado: int,) -> float:
+    """
+    Calcula o preço escolhido com base na quantidade e nos preços de varejo e atacado.
     Se a quantidade for maior ou igual à quantidade mínima para atacado, retorna o preço de atacado, caso contrário, retorna o preço de varejo.
     """
     if quantidade >= qtd_minima_atacado:
@@ -28,9 +24,7 @@ def calcular_subtotal(quantidade: int, preco_escolhido: Decimal) -> float:
     return float(quantidade * preco_escolhido)
 
 
-def criar_item(
-    feira_id: int, item_data: FeiraItemCreate, session: Session
-) -> FeiraItem:
+def criar_item(feira_id: int, item_data: FeiraItemCreate, session: Session) -> FeiraItem:
 
     feira = session.query(Feira).filter(Feira.id == feira_id).first()
     if not feira:
@@ -74,9 +68,7 @@ def criar_item(
     return novo_item
 
 
-def atualizar_item(
-    feira_id: int, item_id: int, item_data: FeiraItemUpdate, session: Session
-) -> FeiraItem:
+def atualizar_item(feira_id: int, item_id: int, item_data: FeiraItemUpdate, session: Session) -> FeiraItem:
     """
     Atualiza um item da feira. Permite atualizar qualquer campo do item, e se os preços ou quantidade forem alterados, recalcula o preço escolhido, subtotal e valor previsto da feira.
     1. Valida se o item existe e pertence à feira

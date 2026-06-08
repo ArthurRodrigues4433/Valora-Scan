@@ -20,9 +20,14 @@ httpx==0.28.1
 numpy==2.2.6
 opencv-python==4.12.0.88
 pillow==11.3.0
-easyocr==1.7.2
+
+paddlepaddle==3.0.0
+paddleocr==2.10.0
 
 qrcode==8.2
 pyzbar==0.1.9
 
 pytest==8.4.1
+
+setuptools>=70.0.0
+wheel>=0.45.0
