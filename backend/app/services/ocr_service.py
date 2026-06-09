@@ -140,16 +140,13 @@ def extrair_precos(texto: str) -> list[float]:
 
 def extrair_qtd_atacado(texto: str) -> Optional[int]:
     padroes = [
-        r"CX\s*(\d+)",
-        r"CX(\d+)",
-        r"EMB\s*(\d+)",
-        r"EMB(\d+)",
-        r"FARDO\s*(\d+)",
-        r"FARDO(\d+)",
-        r"LEVE\s*(\d+)",
-        r"LEVE(\d+)",
-        r"A PARTIR DE\s*(\d+)",
-        r"A PARTIR DE(\d+)",
+        r"\bA\s*PARTIR\s*DE\s*(\d+)\s*UNI?D?S?\b",
+        r"\bA\s*PARTIR\s*DE\s*(\d+)\b",
+        r"CX\s*(\d+)\s*UNI?D?S?\b",
+        r"CX\s*(\d+)\s+\b",
+        r"EMB\s*(\d+)\s*UNI?D?S?\b",
+        r"FARDO\s*(\d+)\s*UNI?D?S?\b",
+        r"LEVE\s*(\d+)\s*UNI?D?S?\b",
     ]
     
     texto_upper = texto.upper()
@@ -183,7 +180,7 @@ def parser_mix_mateus(texto: str) -> ProdutoExtraido:
     logger.debug(f"[MIXMATEUS] Preços encontrados: {precos}")
     
     preco_varejo = precos[0] if len(precos) >= 1 else None
-    preco_atacado = precos[1] if len(precos) >= 2 else precos[0] if len(precos) >= 1 else None
+    preco_atacado = precos[1] if len(precos) >= 2 else None
     
     qtd_atacado = extrair_qtd_atacado(texto)
     logger.debug(f"[MIXMATEUS] Quantidade atacado encontrada: {qtd_atacado}")

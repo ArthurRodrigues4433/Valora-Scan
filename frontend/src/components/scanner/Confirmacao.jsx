@@ -18,7 +18,7 @@ const Confirmacao = () => {
         imagem_url: ''
     })
     
-    const [quantidade, setQuantidade] = useState(1)
+    const [quantidade, setQuantidade] = useState('')
     const [ocrTexto, setOcrTexto] = useState('')
     const [confianca, setConfianca] = useState(0)
     const [previewUrl, setPreviewUrl] = useState('')
@@ -48,9 +48,10 @@ const Confirmacao = () => {
     const precoVarejo = parseFloat(produto.preco_varejo) || 0
     const precoAtacado = parseFloat(produto.preco_atacado) || 0
     const qtdMinima = parseInt(produto.qtd_minima_atacado) || 1
-    const precoEscolhido = quantidade >= qtdMinima && precoAtacado > 0 ? precoAtacado : precoVarejo
-    const subtotal = quantidade * precoEscolhido
-    const tipoPreco = quantidade >= qtdMinima && precoAtacado > 0 ? 'atacado' : 'varejo'
+    const quantidadeNum = quantidade === '' ? 1 : Math.max(1, parseInt(quantidade) || 1)
+    const precoEscolhido = quantidadeNum >= qtdMinima && precoAtacado > 0 ? precoAtacado : precoVarejo
+    const subtotal = quantidadeNum * precoEscolhido
+    const tipoPreco = quantidadeNum >= qtdMinima && precoAtacado > 0 ? 'atacado' : 'varejo'
 
     const handleProdutoChange = (field, value) => {
         setProduto(prev => ({ ...prev, [field]: value }))
@@ -66,6 +67,10 @@ const Confirmacao = () => {
             alert('Nome e preço varejo são obrigatórios')
             return
         }
+        if (quantidade === '' || parseInt(quantidade) < 1) {
+            alert('Quantidade deve ser maior que 0')
+            return
+        }
         
         setSubmitting(true)
         try {
@@ -74,7 +79,7 @@ const Confirmacao = () => {
                 preco_varejo: parseFloat(produto.preco_varejo),
                 preco_atacado: parseFloat(produto.preco_atacado) || 0,
                 qtd_minima_atacado: parseInt(produto.qtd_minima_atacado) || 0,
-                quantidade: quantidade,
+                quantidade: quantidadeNum,
                 unidade_medida: produto.unidade_medida || null,
                 imagem_url: produto.imagem_url || null,
                 ocr_texto: ocrTexto
@@ -166,11 +171,16 @@ const Confirmacao = () => {
                     <div className="form-group">
                         <label className="form-label">Quantidade</label>
                         <input
-                            type="number"
-                            min="1"
+                            type="text"
+                            inputMode="numeric"
+                            pattern="[0-9]*"
                             className="form-input"
                             value={quantidade}
-                            onChange={e => setQuantidade(parseInt(e.target.value) || 1)}
+                            onChange={e => {
+                                const value = e.target.value.replace(/\D/g, '')
+                                setQuantidade(value)
+                            }}
+                            placeholder="Quantidade"
                         />
                     </div>
                     
