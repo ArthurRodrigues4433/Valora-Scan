@@ -1,8 +1,12 @@
+import re
+import logging
+from typing import Optional
 from paddleocr import PaddleOCR
 import cv2
 import numpy as np
 from app.schemas.ocr import OCRResponse, ProdutoExtraido
-import re
+
+logger = logging.getLogger(__name__)
 
 ocr = PaddleOCR(
     lang="pt",
@@ -12,18 +16,35 @@ ocr = PaddleOCR(
     det=True,
 )
 
+PADROES_IGNORAR_NOME = [
+    r"(?:PRECO|PREÇO|OFERTA|DESCONTO)",
+    r"^(?:COD|PLU):",
+    r"MIXMATEUS",
+    r"(?:DATA|HORA):",
+]
+
+UNIDADES_MEDIDA = [
+    (r"\d*\s*LITRO(S)?\b", "l"),
+    (r"\d*\s*LT\b", "l"),
+    (r"\b\d*\s*L\b", "l"),
+    (r"\d*\s*KG\b", "kg"),
+    (r"\d*\s*MG\b", "mg"),
+    (r"\d*\s*ML\b", "ml"),
+    (r"\d*\s*UN(ID)?(ADE)?S?\b", "un"),
+    (r"\d*\s*UND\b", "un"),
+    (r"\d*\s*UNID\b", "un"),
+    (r"\d*\s*G\b", "g"),
+]
+
 
 def preprocessar_imagem(conteudo: bytes) -> np.ndarray:
-    """Converte bytes para imagem"""
     nparr = np.frombuffer(conteudo, np.uint8)
     img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
     return img
 
 
 def extrair_texto_ocr(conteudo: bytes) -> tuple[str, float]:
-    """Extrai texto bruto da imagem usando PaddleOCR"""
     img = preprocessar_imagem(conteudo)
-    
     resultados = ocr.ocr(img, cls=True)
     
     textos = []
@@ -42,77 +63,251 @@ def extrair_texto_ocr(conteudo: bytes) -> tuple[str, float]:
     return texto_completo, confianca_media
 
 
-def extrair_nome_produto(texto: str) -> str | None:
+def extrair_nome_produto(texto: str) -> Optional[str]:
     linhas = texto.split("\n")
-
-    padroes_ignorar = [
-        r"R\$\s*\d+[,.]\d{2}",  # Preços
-        r"(?:a partir de|min|mínimo|\b)(?:\s*)(\d+)\s*(?:un|und|unid)",
-        r"(?:kg|g|ml|l|litro|lata|pc|un|und|unid)\b",
-        r"(?:preço|varejo|atacado|valor)",
-        r"(?:promo|oferta|desconto)",
-        r"^\s*$",
-        r"^\d+\s*$", 
-    ]
-
+    
     linhas_filtradas = []
     for linha in linhas:
         linha_limpa = linha.strip()
         if not linha_limpa:
             continue
-
-        if not any(re.search(p, linha_limpa, re.IGNORECASE) for p in padroes_ignorar):
-            # Remove acoláculos de preços da linha
-            linha_sem_preco = re.sub(r"R\$\s*\d+[,.]\d{2}", "", linha_limpa).strip()
-            if linha_sem_preco:
-                linhas_filtradas.append(linha_sem_preco)
-
-    # Retorna a(s) linha(s) mais relevante(s) como nome
+        
+        linha_upper = linha_limpa.upper()
+        
+        if re.search(r"^\d{8,}", linha_limpa):
+            continue
+        
+        if re.search(r"^\d+[,.]\d+$", linha_limpa):
+            continue
+        
+        ignorar = False
+        for padrao in PADROES_IGNORAR_NOME:
+            if re.search(padrao, linha_upper, re.IGNORECASE):
+                ignorar = True
+                break
+        
+        if ignorar:
+            continue
+        
+        linha_sem_preco = re.sub(r"(?:R\$\s*|\$)\s*\d+[,.]?\d{0,2}", "", linha_limpa).strip()
+        linha_sem_preco = re.sub(r"\d+[,.]\d{2}", "", linha_sem_preco).strip()
+        
+        if linha_sem_preco and len(linha_sem_preco) > 2:
+            linhas_filtradas.append(linha_sem_preco)
+    
     if linhas_filtradas:
-        # Prioriza linhas mais longas (provavelmente o nome)
-        linhas_filtradas.sort(key=len, reverse=True)
-        return linhas_filtradas[0] if linhas_filtradas[0] else None
-
+        return linhas_filtradas[0]
+    
     return None
 
-def extrair_precos_e_quantidade(texto: str) -> ProdutoExtraido:
-    """Extrai preços varejo/atacado e quantidade mínima do texto OCR"""
 
-    # Preços no formato R$ X,XX ou R$ X.XX
-    precos = re.findall(r"R\$\s*(\d+[,.]\d{2})", texto)
+def normalizar_preco(valor: str) -> Optional[float]:
+    if not valor:
+        return None
+    valor = valor.strip().replace(" ", "").replace("R$", "").replace("$", "")
+    if "," in valor:
+        valor = valor.replace(".", "").replace(",", ".")
+    elif "." not in valor:
+        valor = valor + ".00"
+    try:
+        return float(valor)
+    except ValueError:
+        return None
 
-    # Quantidade mínima - busca padrões como "a partir de 3 un", "3x und.", "mín 3 un"
-    qtd_match = re.search(
-        r"(?:a partir de|min|mínimo|\b)(?:\s*)(\d+)\s*(?:un|und|unid)",
-        texto,
-        re.IGNORECASE,
-    )
 
-    # Unidade de medida
-    unid_match = re.search(
-        r"\b(kg|pc|un|und|unid|g|ml|l|litro|lata)\b", texto, re.IGNORECASE
-    )
+def extrair_precos(texto: str) -> list[float]:
+    precos_encontrados = []
+    
+    linhas = texto.split("\n")
+    for linha in linhas:
+        linha_limpa = linha.strip()
+        
+        if re.search(r"(?:CX|EMB|FARDO|LEVE|FD)\s*(\d+)", linha_limpa.upper()):
+            continue
+        
+        padrao_preco = r"(\d+[,.]\d{2})"
+        matches = re.findall(padrao_preco, linha_limpa)
+        
+        for match in matches:
+            preco = normalizar_preco(match)
+            if preco is not None and preco not in precos_encontrados:
+                precos_encontrados.append(preco)
+    
+    precos_encontrados.sort()
+    
+    return precos_encontrados
 
-    # Lógica: primeiro preço geralmente é varejo, segundo é atacado
-    preco_varejo = float(precos[0].replace(",", ".")) if len(precos) >= 1 else None
-    preco_atacado = float(precos[1].replace(",", ".")) if len(precos) >= 2 else None
-    qtd_minima = int(qtd_match.group(1)) if qtd_match else None
-    unidade = unid_match.group(1).lower() if unid_match else None
 
+def extrair_qtd_atacado(texto: str) -> Optional[int]:
+    padroes = [
+        r"CX\s*(\d+)",
+        r"CX(\d+)",
+        r"EMB\s*(\d+)",
+        r"EMB(\d+)",
+        r"FARDO\s*(\d+)",
+        r"FARDO(\d+)",
+        r"LEVE\s*(\d+)",
+        r"LEVE(\d+)",
+        r"A PARTIR DE\s*(\d+)",
+        r"A PARTIR DE(\d+)",
+    ]
+    
+    texto_upper = texto.upper()
+    
+    for padrao in padroes:
+        match = re.search(padrao, texto_upper)
+        if match:
+            return int(match.group(1))
+    
+    return None
+
+
+def extrair_unidade_medida(texto: str) -> Optional[str]:
+    texto_upper = re.sub(r"\d+[,.]\d{2}", "", texto.upper())
+    texto_upper = re.sub(r"(?:PRECO|PREÇO|OFERTA|DESCONTO|COD|PLU|MIXMATEUS|DATA|HORA)", "", texto_upper, flags=re.IGNORECASE)
+    
+    for padrao, unidade in UNIDADES_MEDIDA:
+        match = re.search(padrao, texto_upper)
+        if match:
+            return unidade
+    return None
+
+
+def parser_mix_mateus(texto: str) -> ProdutoExtraido:
+    logger.debug("[MIXMATEUS] Processando texto específico do Mix Mateus")
+    
     nome = extrair_nome_produto(texto)
-
+    logger.debug(f"[MIXMATEUS] Nome encontrado: {nome}")
+    
+    precos = extrair_precos(texto)
+    logger.debug(f"[MIXMATEUS] Preços encontrados: {precos}")
+    
+    preco_varejo = precos[0] if len(precos) >= 1 else None
+    preco_atacado = precos[1] if len(precos) >= 2 else precos[0] if len(precos) >= 1 else None
+    
+    qtd_atacado = extrair_qtd_atacado(texto)
+    logger.debug(f"[MIXMATEUS] Quantidade atacado encontrada: {qtd_atacado}")
+    
+    unidade = extrair_unidade_medida(texto)
+    logger.debug(f"[MIXMATEUS] Unidade encontrada: {unidade}")
+    
     return ProdutoExtraido(
         nome=nome,
         preco_varejo=preco_varejo,
         preco_atacado=preco_atacado,
-        qtd_minima_atacado=qtd_minima,
+        qtd_minima_atacado=qtd_atacado,
+        unidade_medida=unidade,
+    )
+
+
+def parser_assai(texto: str) -> ProdutoExtraido:
+    logger.debug("[ASSAI] Processando texto específico do Assai")
+    
+    nome = extrair_nome_produto(texto)
+    logger.debug(f"[ASSAI] Nome encontrado: {nome}")
+    
+    precos = extrair_precos(texto)
+    logger.debug(f"[ASSAI] Preços encontrados: {precos}")
+    
+    preco_varejo = precos[0] if len(precos) >= 1 else None
+    preco_atacado = precos[1] if len(precos) >= 2 else None
+    
+    qtd_atacado = extrair_qtd_atacado(texto)
+    logger.debug(f"[ASSAI] Quantidade atacado encontrada: {qtd_atacado}")
+    
+    unidade = extrair_unidade_medida(texto)
+    logger.debug(f"[ASSAI] Unidade encontrada: {unidade}")
+    
+    return ProdutoExtraido(
+        nome=nome,
+        preco_varejo=preco_varejo,
+        preco_atacado=preco_atacado,
+        qtd_minima_atacado=qtd_atacado,
+        unidade_medida=unidade,
+    )
+
+
+def parser_atacadao(texto: str) -> ProdutoExtraido:
+    logger.debug("[ATACADAO] Processando texto específico do Atacadao")
+    
+    nome = extrair_nome_produto(texto)
+    logger.debug(f"[ATACADAO] Nome encontrado: {nome}")
+    
+    precos = extrair_precos(texto)
+    logger.debug(f"[ATACADAO] Preços encontrados: {precos}")
+    
+    preco_varejo = precos[0] if len(precos) >= 1 else None
+    preco_atacado = precos[1] if len(precos) >= 2 else None
+    
+    qtd_atacado = extrair_qtd_atacado(texto)
+    logger.debug(f"[ATACADAO] Quantidade atacado encontrada: {qtd_atacado}")
+    
+    unidade = extrair_unidade_medida(texto)
+    logger.debug(f"[ATACADAO] Unidade encontrada: {unidade}")
+    
+    return ProdutoExtraido(
+        nome=nome,
+        preco_varejo=preco_varejo,
+        preco_atacado=preco_atacado,
+        qtd_minima_atacado=qtd_atacado,
+        unidade_medida=unidade,
+    )
+
+
+def detectar_supermercado(texto: str) -> str:
+    texto_upper = texto.upper()
+    
+    if "MIXMATEUS" in texto_upper:
+        return "mix_mateus"
+    if "ASSAI" in texto_upper:
+        return "assai"
+    if "ATACADAO" in texto_upper:
+        return "atacadao"
+    
+    return "generic"
+
+
+def extrair_dados_produto(texto: str) -> ProdutoExtraido:
+    supermercado = detectar_supermercado(texto)
+    logger.debug(f"[OCR] Supermercado detectado: {supermercado}")
+    
+    if supermercado == "mix_mateus":
+        return parser_mix_mateus(texto)
+    if supermercado == "assai":
+        return parser_assai(texto)
+    if supermercado == "atacadao":
+        return parser_atacadao(texto)
+    
+    nome = extrair_nome_produto(texto)
+    logger.debug(f"[OCR] Nome encontrado: {nome}")
+    
+    precos = extrair_precos(texto)
+    logger.debug(f"[OCR] Preços encontrados: {precos}")
+    
+    preco_varejo = precos[0] if len(precos) >= 1 else None
+    preco_atacado = precos[1] if len(precos) >= 2 else None
+    
+    qtd_atacado = extrair_qtd_atacado(texto)
+    logger.debug(f"[OCR] Quantidade atacado encontrada: {qtd_atacado}")
+    
+    unidade = extrair_unidade_medida(texto)
+    logger.debug(f"[OCR] Unidade encontrada: {unidade}")
+    
+    return ProdutoExtraido(
+        nome=nome,
+        preco_varejo=preco_varejo,
+        preco_atacado=preco_atacado,
+        qtd_minima_atacado=qtd_atacado,
         unidade_medida=unidade,
     )
 
 
 async def processar_imagem_ocr(conteudo: bytes) -> OCRResponse:
-    """Função principal que processa imagem e retorna resposta completa"""
     texto, confianca = extrair_texto_ocr(conteudo)
-    produto = extrair_precos_e_quantidade(texto)
-
+    logger.debug(f"[OCR DEBUG] Texto bruto: {texto}")
+    logger.debug(f"[OCR DEBUG] Confiança: {confianca}")
+    
+    produto = extrair_dados_produto(texto)
+    logger.debug(f"[OCR DEBUG] Produto extraído: {produto}")
+    
     return OCRResponse(texto_extrato=texto, produto=produto, confianca=confianca)

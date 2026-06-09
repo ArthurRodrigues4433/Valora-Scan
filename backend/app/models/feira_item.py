@@ -16,7 +16,7 @@ class FeiraItem(Base):
     quantidade = Column(Integer, nullable=False)
     preco_escolhido = Column(DECIMAL(10, 2), nullable=False)
     subtotal = Column(DECIMAL(10, 2), nullable=False)
-    unidade_medida = Column(String, nullable=False)
+    unidade_medida = Column(String, nullable=True)
     imagem_url = Column(String, nullable=True)
     ocr_texto = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)

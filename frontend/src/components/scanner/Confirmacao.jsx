@@ -15,7 +15,6 @@ const Confirmacao = () => {
         preco_atacado: '',
         qtd_minima_atacado: '',
         unidade_medida: '',
-        categoria: '',
         imagem_url: ''
     })
     
@@ -26,6 +25,7 @@ const Confirmacao = () => {
     const [submitting, setSubmitting] = useState(false)
 
     useEffect(() => {
+        console.log('location.state:', location.state);
         if (!location.state?.produto) {
             navigate(`/feira/${id}`)
             return
@@ -34,11 +34,10 @@ const Confirmacao = () => {
         const dados = location.state.produto
         setProduto({
             nome: dados.nome || '',
-            preco_varejo: dados.preco_varejo?.toString() || '',
-            preco_atacado: dados.preco_atacado?.toString() || '',
-            qtd_minima_atacado: dados.qtd_minima_atacado?.toString() || '',
+            preco_varejo: dados.preco_varejo !== null && dados.preco_varejo !== undefined ? String(dados.preco_varejo) : '',
+            preco_atacado: dados.preco_atacado !== null && dados.preco_atacado !== undefined ? String(dados.preco_atacado) : '',
+            qtd_minima_atacado: dados.qtd_minima_atacado !== null && dados.qtd_minima_atacado !== undefined ? String(dados.qtd_minima_atacado) : '',
             unidade_medida: dados.unidade_medida || '',
-            categoria: '',
             imagem_url: location.state.imagemUrl || ''
         })
         setOcrTexto(location.state.ocrTexto || '')
@@ -72,12 +71,11 @@ const Confirmacao = () => {
         try {
             await api.post(`/feiras/feira/${id}/itens`, {
                 nome: produto.nome,
-                categoria: produto.categoria || null,
                 preco_varejo: parseFloat(produto.preco_varejo),
                 preco_atacado: parseFloat(produto.preco_atacado) || 0,
                 qtd_minima_atacado: parseInt(produto.qtd_minima_atacado) || 0,
                 quantidade: quantidade,
-                unidade_medida: produto.unidade_medida || '',
+                unidade_medida: produto.unidade_medida || null,
                 imagem_url: produto.imagem_url || null,
                 ocr_texto: ocrTexto
             })
@@ -105,9 +103,10 @@ const Confirmacao = () => {
                     )}
                 </div>
                 
-                {previewUrl && (
+{previewUrl && (
                     <div className="produto-preview">
                         <img src={previewUrl} alt="Produto" className="preview-image" />
+                        <pre style={{fontSize: '10px', color: '#888', marginTop: '4px', padding: '4px', background: '#f5f5f5', borderRadius: '4px', maxHeight: '80px', overflow: 'auto'}}>{ocrTexto}</pre>
                     </div>
                 )}
                 
@@ -124,17 +123,6 @@ const Confirmacao = () => {
                         />
                     </div>
                     
-                    <div className="form-group">
-                        <label className="form-label">Categoria</label>
-                        <input
-                            type="text"
-                            className="form-input"
-                            value={produto.categoria}
-                            onChange={e => handleProdutoChange('categoria', e.target.value)}
-                            placeholder="Ex: Bebidas, Higiene..."
-                        />
-                    </div>
-                    
                     <div className="form-row">
                         <div className="form-group">
                             <label className="form-label">Preço Varejo</label>
@@ -142,7 +130,7 @@ const Confirmacao = () => {
                                 type="number"
                                 step="0.01"
                                 className="form-input"
-                                value={produto.preco_varejo}
+                                value={produto.preco_varejo === '' ? '' : produto.preco_varejo}
                                 onChange={e => handleProdutoChange('preco_varejo', e.target.value)}
                                 placeholder="0,00"
                                 required
@@ -171,17 +159,6 @@ const Confirmacao = () => {
                                 value={produto.qtd_minima_atacado}
                                 onChange={e => handleProdutoChange('qtd_minima_atacado', e.target.value)}
                                 placeholder="Ex: 3"
-                            />
-                        </div>
-                        
-                        <div className="form-group">
-                            <label className="form-label">Unidade</label>
-                            <input
-                                type="text"
-                                className="form-input"
-                                value={produto.unidade_medida}
-                                onChange={e => handleProdutoChange('unidade_medida', e.target.value)}
-                                placeholder="kg, un, pc..."
                             />
                         </div>
                     </div>
