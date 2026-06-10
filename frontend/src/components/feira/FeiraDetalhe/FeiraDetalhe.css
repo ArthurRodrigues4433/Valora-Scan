@@ -334,6 +334,38 @@
 }
 
 /* =========================
+   ITEM META (quantidade + economia)
+========================= */
+
+.item-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 4px;
+}
+
+.item-economia {
+    font-size: 11px;
+    color: #2f8d3f;
+    font-weight: 600;
+}
+
+.item-preco-unidade {
+    font-size: 11px;
+    color: #888;
+    margin-top: 4px;
+}
+
+/* Ajustar item-quantidade para ficar igual ao estilo atual */
+.item-quantidade {
+    color: #666;
+    background: #f0f0f0;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
+/* =========================
     RESPONSIVIDADE
 ========================= */
 

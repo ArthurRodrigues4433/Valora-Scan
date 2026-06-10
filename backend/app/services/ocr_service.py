@@ -172,22 +172,22 @@ def extrair_unidade_medida(texto: str) -> Optional[str]:
 
 def parser_mix_mateus(texto: str) -> ProdutoExtraido:
     logger.debug("[MIXMATEUS] Processando texto específico do Mix Mateus")
-    
+
     nome = extrair_nome_produto(texto)
     logger.debug(f"[MIXMATEUS] Nome encontrado: {nome}")
-    
+
     precos = extrair_precos(texto)
     logger.debug(f"[MIXMATEUS] Preços encontrados: {precos}")
-    
-    preco_varejo = precos[0] if len(precos) >= 1 else None
-    preco_atacado = precos[1] if len(precos) >= 2 else None
-    
+
+    preco_varejo = precos[1] if len(precos) >= 2 else (precos[0] if len(precos) >= 1 else None)
+    preco_atacado = precos[0] if len(precos) >= 2 else None
+
     qtd_atacado = extrair_qtd_atacado(texto)
     logger.debug(f"[MIXMATEUS] Quantidade atacado encontrada: {qtd_atacado}")
-    
+
     unidade = extrair_unidade_medida(texto)
     logger.debug(f"[MIXMATEUS] Unidade encontrada: {unidade}")
-    
+
     return ProdutoExtraido(
         nome=nome,
         preco_varejo=preco_varejo,
@@ -199,22 +199,22 @@ def parser_mix_mateus(texto: str) -> ProdutoExtraido:
 
 def parser_assai(texto: str) -> ProdutoExtraido:
     logger.debug("[ASSAI] Processando texto específico do Assai")
-    
+
     nome = extrair_nome_produto(texto)
     logger.debug(f"[ASSAI] Nome encontrado: {nome}")
-    
+
     precos = extrair_precos(texto)
     logger.debug(f"[ASSAI] Preços encontrados: {precos}")
-    
-    preco_varejo = precos[0] if len(precos) >= 1 else None
-    preco_atacado = precos[1] if len(precos) >= 2 else None
-    
+
+    preco_varejo = precos[1] if len(precos) >= 2 else (precos[0] if len(precos) >= 1 else None)
+    preco_atacado = precos[0] if len(precos) >= 2 else None
+
     qtd_atacado = extrair_qtd_atacado(texto)
     logger.debug(f"[ASSAI] Quantidade atacado encontrada: {qtd_atacado}")
-    
+
     unidade = extrair_unidade_medida(texto)
     logger.debug(f"[ASSAI] Unidade encontrada: {unidade}")
-    
+
     return ProdutoExtraido(
         nome=nome,
         preco_varejo=preco_varejo,
@@ -226,22 +226,22 @@ def parser_assai(texto: str) -> ProdutoExtraido:
 
 def parser_atacadao(texto: str) -> ProdutoExtraido:
     logger.debug("[ATACADAO] Processando texto específico do Atacadao")
-    
+
     nome = extrair_nome_produto(texto)
     logger.debug(f"[ATACADAO] Nome encontrado: {nome}")
-    
+
     precos = extrair_precos(texto)
     logger.debug(f"[ATACADAO] Preços encontrados: {precos}")
-    
-    preco_varejo = precos[0] if len(precos) >= 1 else None
-    preco_atacado = precos[1] if len(precos) >= 2 else None
-    
+
+    preco_varejo = precos[1] if len(precos) >= 2 else (precos[0] if len(precos) >= 1 else None)
+    preco_atacado = precos[0] if len(precos) >= 2 else None
+
     qtd_atacado = extrair_qtd_atacado(texto)
     logger.debug(f"[ATACADAO] Quantidade atacado encontrada: {qtd_atacado}")
-    
+
     unidade = extrair_unidade_medida(texto)
     logger.debug(f"[ATACADAO] Unidade encontrada: {unidade}")
-    
+
     return ProdutoExtraido(
         nome=nome,
         preco_varejo=preco_varejo,
@@ -267,29 +267,29 @@ def detectar_supermercado(texto: str) -> str:
 def extrair_dados_produto(texto: str) -> ProdutoExtraido:
     supermercado = detectar_supermercado(texto)
     logger.debug(f"[OCR] Supermercado detectado: {supermercado}")
-    
+
     if supermercado == "mix_mateus":
         return parser_mix_mateus(texto)
     if supermercado == "assai":
         return parser_assai(texto)
     if supermercado == "atacadao":
         return parser_atacadao(texto)
-    
+
     nome = extrair_nome_produto(texto)
     logger.debug(f"[OCR] Nome encontrado: {nome}")
-    
+
     precos = extrair_precos(texto)
     logger.debug(f"[OCR] Preços encontrados: {precos}")
-    
-    preco_varejo = precos[0] if len(precos) >= 1 else None
-    preco_atacado = precos[1] if len(precos) >= 2 else None
-    
+
+    preco_varejo = precos[1] if len(precos) >= 2 else (precos[0] if len(precos) >= 1 else None)
+    preco_atacado = precos[0] if len(precos) >= 1 else None
+
     qtd_atacado = extrair_qtd_atacado(texto)
     logger.debug(f"[OCR] Quantidade atacado encontrada: {qtd_atacado}")
-    
+
     unidade = extrair_unidade_medida(texto)
     logger.debug(f"[OCR] Unidade encontrada: {unidade}")
-    
+
     return ProdutoExtraido(
         nome=nome,
         preco_varejo=preco_varejo,

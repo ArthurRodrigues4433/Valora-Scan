@@ -18,7 +18,7 @@ const FeiraDetalhe = () => {
     const [feira, setFeira] = useState(null);
     const [loading, setLoading] = useState(true);
     const [finalizing, setFinalizing] = useState(false);
-    
+
     const fetchFeira = async () => {
         try {
             const response = await api.get(`/feiras/feira/${id}`);
@@ -59,9 +59,10 @@ const FeiraDetalhe = () => {
     }, [id]);
 
     const feiraData = feira || {};
-    const gastoParcial = (feiraData.itens || []).reduce((total, item) => total + (item.preco_escolhido || 0), 0);
-    const economiaParcial = (feiraData.itens || []).reduce((total, item) => total + ((item.preco_varejo || 0) - (item.preco_escolhido || 0)), 0);
-    
+    const gastoParcial = (feiraData.itens || []).reduce((total, item) => total + (item.subtotal || 0), 0);
+    const economiaParcial = (feiraData.itens || [])
+        .filter(item => item.tipo === "atacado" && item.preco_atacado)
+        .reduce((total, item) => total + ((item.quantidade || 0) * ((item.preco_varejo || 0) - (item.preco_atacado || 0))), 0);
     const getStatusConfig = (status) =>
         STATUS_CONFIG[status] || STATUS_CONFIG.finalizada;
 
@@ -123,9 +124,11 @@ const FeiraDetalhe = () => {
                                         nome={item.nome}
                                         preco={item.preco_escolhido}
                                         precoVarejo={item.preco_varejo}
+                                        precoAtacado={item.preco_atacado}
                                         quantidade={item.quantidade}
                                         tipo={item.tipo}
                                         unidade={item.unidade_medida}
+                                        valorUnitario={item.preco_escolhido}
                                     />
                                 ))}
                             </div>
@@ -155,13 +158,21 @@ const FeiraDetalhe = () => {
     );
 };
 
-const ItemCard = ({ nome, preco, precoVarejo, quantidade, tipo, unidade }) => {
+const ItemCard = ({ nome, preco, precoVarejo, precoAtacado, quantidade, tipo, unidade, economia, valorUnitario }) => {
+
+    function saberTipoAtacadoVarejo(valorUnitario, precoAtacado, precoVarejo) {
+        if (valorUnitario === precoAtacado) return "atacado";
+        if (valorUnitario === precoVarejo) return "varejo";
+        return null;
+    }
+
     const tipoConfig = {
         atacado: { label: "Atacado", bg: "#2f8d3f", color: "#fff" },
         varejo: { label: "Varejo", bg: "#3498db", color: "#fff" },
     };
-    const config = tipoConfig[tipo] || tipoConfig.varejo;
-    
+    const tipoItem = saberTipoAtacadoVarejo(preco, precoAtacado, precoVarejo);
+    const valorTotal = preco * quantidade;
+
     return (
         <div className="card-item">
             <div className="item-info">
@@ -169,15 +180,23 @@ const ItemCard = ({ nome, preco, precoVarejo, quantidade, tipo, unidade }) => {
                 <div>
                     <h4>{nome}</h4>
                     <div className="item-tipo">
-                        <span style={{ backgroundColor: config.bg, color: config.color }}>
-                            {config.label}
+                        <span style={{ backgroundColor: tipoConfig[tipoItem].bg, color: tipoConfig[tipoItem].color, marginRight: 6 }}>
+                            {tipoConfig[tipoItem].label}
                         </span>
-                        <span className="item-quantidade">Quant: {quantidade} {unidade}</span>
+                        <span className="item-quantidade">{quantidade} un</span>
+                    </div>
+                    <div className="item-meta">
+                        {economia > 0 && (
+                            <span className="item-economia">🟢 Economizou R$ {economia.toFixed(2).replace('.', ',')}</span>
+                        )}
+                    </div>
+                    <div className="item-preco-unidade">
+                        R$ {valorUnitario.toFixed(2).replace('.', ',')}/un • De R$ {precoVarejo.toFixed(2).replace('.', ',')}
                     </div>
                 </div>
             </div>
             <div className="item-preco">
-                <strong>R$ {preco.toFixed(2).replace('.', ',')}</strong>
+                <strong>R$ {valorTotal.toFixed(2).replace('.', ',')}</strong>
             </div>
         </div>
     );

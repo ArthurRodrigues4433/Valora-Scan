@@ -15,6 +15,7 @@ class FeiraItemDetalheSchema(BaseModel):
     unidade_medida: str
     tempo: str
     tipo: str
+    economia: float
 
     model_config = ConfigDict(from_attributes=True)
 

@@ -55,34 +55,39 @@ def obter_feira_detalhe(feira_id: int, usuario_id: int, session: Session) -> dic
         raise ValueError("Acesso negado")
 
     gasto_total = float(feira_db.orcamento)
-    
+
     if feira_db.created_at.date() == datetime.utcnow().date():
         data_str = f"Hoje, {feira_db.created_at.strftime('%H:%M')}"
     else:
         data_str = feira_db.created_at.strftime("%a, %H:%M")
 
     itens_db = session.query(FeiraItem).filter(FeiraItem.feira_id == feira_id).all()
-    
+
     itens = []
     for item in itens_db:
         preco = float(item.preco_escolhido)
         preco_normal = float(item.preco_varejo)
         economia = max(0, preco_normal - preco) if preco_normal > preco else 0.0
         tipo = "atacado" if item.preco_atacado and float(item.preco_atacado) <= float(item.preco_varejo) else "varejo"
-        
-        itens.append({
-            "id": item.id,
-            "nome": item.nome,
-            "preco_escolhido": preco,
-            "preco_varejo": preco_normal,
-            "preco_atacado": float(item.preco_atacado) if item.preco_atacado else None,
-            "qtd_minima_atacado": item.qtd_minima_atacado,
-            "quantidade": item.quantidade,
-            "subtotal": float(item.subtotal),
-            "unidade_medida": item.unidade_medida,
-            "tempo": item.created_at.strftime("%H:%M"),
-            "tipo": tipo,
-        })
+
+        itens.append(
+            {
+                "id": item.id,
+                "nome": item.nome,
+                "preco_escolhido": preco,
+                "preco_varejo": preco_normal,
+                "preco_atacado": (
+                    float(item.preco_atacado) if item.preco_atacado else None
+                ),
+                "qtd_minima_atacado": item.qtd_minima_atacado,
+                "quantidade": item.quantidade,
+                "subtotal": float(item.subtotal),
+                "unidade_medida": item.unidade_medida,
+                "tempo": item.created_at.strftime("%H:%M"),
+                "tipo": tipo,
+                "economia": economia,
+            }
+        )
 
     return {
         "id": feira_db.id,
