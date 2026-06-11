@@ -77,7 +77,7 @@ const Feira = () => {
             setNome("");
             setOrcamento("");
             await fetchFeiras();
-            navigate(`/feira/${response.data.id}`);
+            navigate(`/feiras}`);
         } catch (error) {
             console.error("Erro ao criar feira:", error);
             alert(error.response?.data?.detail || "Erro ao criar feira");

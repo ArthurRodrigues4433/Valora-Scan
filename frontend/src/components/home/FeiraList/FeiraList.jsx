@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./FeiraList.css";
 import FeiraCard from "../FeiraCard/FeiraCard";
 import api from "../../../services/api";
@@ -73,11 +74,14 @@ const EmptyState = () => (
     </div>
 );
 
-const SectionTitle = ({ title }) => (
-    <div className="section-title">
-        <h3>{title}</h3>
-        <button>Ver tudo</button>
-    </div>
-);
+const SectionTitle = ({ title }) => {
+    const navigate = useNavigate();
+    return (
+        <div className="section-title">
+            <h3>{title}</h3>
+            <button onClick={() => navigate("/feiras")}>Ver tudo</button>
+        </div>
+    );
+};
 
 export default FeiraList;

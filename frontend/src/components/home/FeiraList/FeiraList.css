@@ -21,6 +21,10 @@
 }
 
 .section-title button {
+    cursor: pointer;
+}
+
+.section-title button {
     border: none;
     background: transparent;
     color: var(--primary-color);
