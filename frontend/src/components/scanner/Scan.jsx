@@ -15,13 +15,56 @@ const Scan = () => {
     const canvasRef = useRef(null)
     const streamRef = useRef(null)
 
+    const validarFeira = async () => {
+        try {
+            const response = await api.get(`/feiras/feira/${id}`);
+
+            const feira = response.data;
+
+            if (feira.status === "finalizada") {
+                alert("Esta feira já foi finalizada.");
+                navigate("/feiras", { replace: true });
+                return false;
+            }
+
+            return true;
+
+        } catch (error) {
+
+            console.error(error);
+
+            if (error.response?.status === 404) {
+                alert("Feira não encontrada.");
+            } else if (error.response?.status === 403) {
+                alert("Você não possui acesso a esta feira.");
+            } else {
+                alert("Erro ao carregar a feira.");
+            }
+
+            navigate("/feiras", { replace: true });
+            return false;
+        }
+    };
+
     useEffect(() => {
-        startWebcam()
+
+        const iniciar = async () => {
+
+            const ok = await validarFeira();
+
+            if (ok) {
+                startWebcam();
+            }
+
+        };
+
+        iniciar();
 
         return () => {
-            stopWebcam()
-        }
-    }, [])
+            stopWebcam();
+        };
+
+    }, [id]);
 
     const startWebcam = async () => {
         if (streamRef.current) return
@@ -105,7 +148,12 @@ const Scan = () => {
     }
 
     const processarImagem = async (file) => {
-        if (!file) return
+
+        const ok = await validarFeira();
+
+        if (!ok) return;
+
+        if (!file) return;
 
         setProcessing(true)
 

@@ -20,12 +20,30 @@ const FeiraDetalhe = () => {
     const [finalizing, setFinalizing] = useState(false);
 
     const fetchFeira = async () => {
+        setLoading(true);
+
         try {
             const response = await api.get(`/feiras/feira/${id}`);
             setFeira(response.data);
+
         } catch (error) {
             console.error("Erro ao carregar feira:", error);
-            alert("Erro ao carregar os dados da feira");
+
+            if (error.response?.status === 404) {
+                alert("Feira não encontrada.");
+                navigate("/feiras", { replace: true });
+                return;
+            }
+
+            if (error.response?.status === 403) {
+                alert("Você não tem permissão para acessar essa feira.");
+                navigate("/feiras", { replace: true });
+                return;
+            }
+
+            alert("Erro ao carregar a feira.");
+            navigate("/feiras", { replace: true });
+
         } finally {
             setLoading(false);
         }
@@ -58,14 +76,22 @@ const FeiraDetalhe = () => {
         fetchFeira();
     }, [id]);
 
-    const feiraData = feira || {};
+    if (!feira) {
+        return null;
+    }
+
+    const feiraData = feira;
     const gastoParcial = (feiraData.itens || []).reduce((total, item) => total + (item.subtotal || 0), 0);
     const economiaParcial = (feiraData.itens || [])
         .filter(item => item.tipo === "atacado" && item.preco_atacado)
         .reduce((total, item) => total + ((item.quantidade || 0) * ((item.preco_varejo || 0) - (item.preco_atacado || 0))), 0);
     const getStatusConfig = (status) =>
-        STATUS_CONFIG[status] || STATUS_CONFIG.finalizada;
-
+        STATUS_CONFIG[status] || {
+            label: "Desconhecido",
+            color: "#6b7280",
+            bg: "#f3f4f6",
+        };
+    
     return (
         <div className="feira-detalhe-container">
             {loading ? (

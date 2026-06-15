@@ -97,7 +97,7 @@ async def deletar_feira(
 
 
 @feiras_router.get("/feira/resumo")
-async def listar_feiras(
+async def resumo_feiras(
     session: Session = Depends(pegar_session), usuario: Usuario = Depends(verify_token)
 ):
     return listar_feiras_resumo(usuario.id, session)
