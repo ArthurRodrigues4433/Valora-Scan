@@ -91,7 +91,7 @@ const FeiraDetalhe = () => {
             color: "#6b7280",
             bg: "#f3f4f6",
         };
-    
+
     return (
         <div className="feira-detalhe-container">
             {loading ? (
@@ -144,19 +144,25 @@ const FeiraDetalhe = () => {
                         <h3 className="itens-title">Itens da feira</h3>
                         {(feiraData.itens && feiraData.itens.length > 0) ? (
                             <div className="itens-list">
-                                {feiraData.itens.map((item) => (
-                                    <ItemCard
-                                        key={item.id}
-                                        nome={item.nome}
-                                        preco={item.preco_escolhido}
-                                        precoVarejo={item.preco_varejo}
-                                        precoAtacado={item.preco_atacado}
-                                        quantidade={item.quantidade}
-                                        tipo={item.tipo}
-                                        unidade={item.unidade_medida}
-                                        valorUnitario={item.preco_escolhido}
-                                    />
-                                ))}
+                                {feiraData.itens.map((item) => {
+                                    const economia = item.preco_atacado && item.tipo === "atacado"
+                                        ? (item.preco_varejo - item.preco_atacado) * item.quantidade
+                                        : 0;
+                                    return (
+                                        <ItemCard
+                                            key={item.id}
+                                            nome={item.nome}
+                                            preco={item.preco_escolhido}
+                                            precoVarejo={item.preco_varejo}
+                                            precoAtacado={item.preco_atacado}
+                                            quantidade={item.quantidade}
+                                            tipo={item.tipo}
+                                            unidade={item.unidade_medida}
+                                            valorUnitario={item.preco_escolhido}
+                                            economia={economia}
+                                        />
+                                    );
+                                })}
                             </div>
                         ) : (
                             <div className="itens-empty">
@@ -213,11 +219,18 @@ const ItemCard = ({ nome, preco, precoVarejo, precoAtacado, quantidade, tipo, un
                     </div>
                     <div className="item-meta">
                         {economia > 0 && (
-                            <span className="item-economia">🟢 Economizou R$ {economia.toFixed(2).replace('.', ',')}</span>
+                            <span className="item-economia">• Economizou R$ {economia.toFixed(2).replace('.', ',')}</span>
                         )}
                     </div>
                     <div className="item-preco-unidade">
-                        R$ {valorUnitario.toFixed(2).replace('.', ',')}/un • De R$ {precoVarejo.toFixed(2).replace('.', ',')}
+                        {precoAtacado
+                            ? <>
+                                R$ {valorUnitario.toFixed(2).replace('.', ',')}/un • De R$ {precoVarejo.toFixed(2).replace('.', ',')}
+                            </>
+                            : <>
+                                R$ {precoVarejo.toFixed(2).replace('.', ',')}/un
+                            </>
+                        }
                     </div>
                 </div>
             </div>
