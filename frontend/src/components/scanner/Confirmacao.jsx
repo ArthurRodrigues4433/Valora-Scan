@@ -8,7 +8,7 @@ const Confirmacao = () => {
     const { id } = useParams()
     const navigate = useNavigate()
     const location = useLocation()
-    
+
     const [produto, setProduto] = useState({
         nome: '',
         preco_varejo: '',
@@ -17,7 +17,7 @@ const Confirmacao = () => {
         unidade_medida: '',
         imagem_url: ''
     })
-    
+
     const [quantidade, setQuantidade] = useState('')
     const [ocrTexto, setOcrTexto] = useState('')
     const [confianca, setConfianca] = useState(0)
@@ -30,7 +30,7 @@ const Confirmacao = () => {
             navigate(`/feira/${id}`)
             return
         }
-        
+
         const dados = location.state.produto
         setProduto({
             nome: dados.nome || '',
@@ -56,11 +56,11 @@ const Confirmacao = () => {
     const handleProdutoChange = (field, value) => {
         setProduto(prev => ({ ...prev, [field]: value }))
     }
-    
+
     const handleBack = () => {
-        navigate(`/feira/${id}`)
-    }
-    
+        navigate(`/feira/${id}`, { replace: true });
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault()
         if (!produto.nome || !produto.preco_varejo) {
@@ -71,7 +71,7 @@ const Confirmacao = () => {
             alert('Quantidade deve ser maior que 0')
             return
         }
-        
+
         setSubmitting(true)
         try {
             await api.post(`/feiras/feira/${id}/itens`, {
@@ -92,7 +92,7 @@ const Confirmacao = () => {
             setSubmitting(false)
         }
     }
-    
+
     return (
         <div className="confirmacao-container">
             <div className="confirmacao-content">
@@ -107,14 +107,14 @@ const Confirmacao = () => {
                         </span>
                     )}
                 </div>
-                
-{previewUrl && (
+
+                {previewUrl && (
                     <div className="produto-preview">
                         <img src={previewUrl} alt="Produto" className="preview-image" />
-                        <pre style={{fontSize: '10px', color: '#888', marginTop: '4px', padding: '4px', background: '#f5f5f5', borderRadius: '4px', maxHeight: '80px', overflow: 'auto'}}>{ocrTexto}</pre>
+                        <pre style={{ fontSize: '10px', color: '#888', marginTop: '4px', padding: '4px', background: '#f5f5f5', borderRadius: '4px', maxHeight: '80px', overflow: 'auto' }}>{ocrTexto}</pre>
                     </div>
                 )}
-                
+
                 <form className="confirmacao-form" onSubmit={handleSubmit}>
                     <div className="form-group">
                         <label className="form-label">Nome do Produto</label>
@@ -127,7 +127,7 @@ const Confirmacao = () => {
                             required
                         />
                     </div>
-                    
+
                     <div className="form-row">
                         <div className="form-group">
                             <label className="form-label">Preço Varejo</label>
@@ -141,7 +141,7 @@ const Confirmacao = () => {
                                 required
                             />
                         </div>
-                        
+
                         <div className="form-group">
                             <label className="form-label">Preço Atacado</label>
                             <input
@@ -154,7 +154,7 @@ const Confirmacao = () => {
                             />
                         </div>
                     </div>
-                    
+
                     <div className="form-row">
                         <div className="form-group">
                             <label className="form-label">Qtd. Mínima Atacado</label>
@@ -167,7 +167,7 @@ const Confirmacao = () => {
                             />
                         </div>
                     </div>
-                    
+
                     <div className="form-group">
                         <label className="form-label">Quantidade</label>
                         <input
@@ -183,7 +183,7 @@ const Confirmacao = () => {
                             placeholder="Quantidade"
                         />
                     </div>
-                    
+
                     <div className="preco-resumo">
                         <div className="preco-row">
                             <span className="preco-label">
@@ -198,7 +198,7 @@ const Confirmacao = () => {
                             <span className="preco-valor">R$ {subtotal.toFixed(2).replace('.', ',')}</span>
                         </div>
                     </div>
-                    
+
                     <div className="confirmacao-actions">
                         <button
                             type="button"

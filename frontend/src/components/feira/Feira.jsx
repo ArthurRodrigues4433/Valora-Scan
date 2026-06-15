@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import "./Feira.css";
-import { IoAdd } from "react-icons/io5";
+import { IoAdd, IoTrashOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import api from "../../services/api";
 
@@ -12,7 +12,7 @@ const STATUS_CONFIG = {
     pausada: { label: "Pausada", color: "#e6a817", bg: "rgba(230, 168, 23, 0.1)" },
 };
 
-const FeiraCardItem = ({ feira, onClick }) => {
+const FeiraCardItem = ({ feira, onClick, onDelete }) => {
     const status = STATUS_CONFIG[feira.status] || STATUS_CONFIG.finalizada;
     return (
         <div className="card-feira" key={feira.id} onClick={() => onClick(feira.id)}>
@@ -21,12 +21,21 @@ const FeiraCardItem = ({ feira, onClick }) => {
                     <h4>{feira.nome}</h4>
                     <small>{feira.data}</small>
                 </div>
-                <span
-                    className="feira-status"
-                    style={{ color: status.color, backgroundColor: status.bg }}
-                >
-                    {status.label}
-                </span>
+                <div className="card-actions">
+                    <button
+                        className="btn-deletar-feira"
+                        onClick={(event) => onDelete(event, feira.id, feira.nome)}
+                        title="Deletar feira"
+                    >
+                        <IoTrashOutline />
+                    </button>
+                    <span
+                        className="feira-status"
+                        style={{ color: status.color, backgroundColor: status.bg }}
+                    >
+                        {status.label}
+                    </span>
+                </div>
             </div>
             <div className="linha-valores">
                 <span>Gasto</span>
@@ -69,7 +78,7 @@ const Feira = () => {
         if (!nome.trim() || !orcamento) return;
         setSaving(true);
         try {
-            const response = await api.post("/feiras/feira", {
+            await api.post("/feiras/feira", {
                 nome: nome.trim(),
                 orcamento: parseFloat(orcamento),
             });
@@ -77,7 +86,7 @@ const Feira = () => {
             setNome("");
             setOrcamento("");
             await fetchFeiras();
-            navigate(`/feiras}`);
+            navigate(`/home#feira}`);
         } catch (error) {
             console.error("Erro ao criar feira:", error);
             alert(error.response?.data?.detail || "Erro ao criar feira");
@@ -90,6 +99,21 @@ const Feira = () => {
         setShowModal(false);
         setNome("");
         setOrcamento("");
+    };
+    
+    const handleDelete = async (event, id, nome) => {
+        event.stopPropagation();
+
+        const confirmou = window.confirm(`Deseja realmente deletar a feira "${nome}"?`);
+        if (!confirmou) return;
+
+        try {
+            await api.delete(`/feiras/feira/${id}`);
+            await fetchFeiras();
+        } catch (error) {
+            console.error("Erro ao deletar feira:", error);
+            alert(error.response?.data?.detail || "Erro ao deletar feira");
+        }
     };
 
     if (loading) {
@@ -169,6 +193,7 @@ const Feira = () => {
                                                 key={feira.id}
                                                 feira={feira}
                                                 onClick={(id) => navigate(`/feira/${id}`)}
+                                                onDelete={handleDelete}
                                             />
                                         ))}
                                     </div>

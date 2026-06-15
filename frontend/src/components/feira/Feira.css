@@ -135,6 +135,48 @@
     transform: translateY(-3px);
 }
 
+.card-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.btn-deletar-feira {
+    order: 2;
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 50%;
+    background: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.btn-deletar-feira:hover {
+    background: rgba(231, 76, 60, 0.18);
+    transform: scale(1.05);
+}
+
+.btn-deletar-feira svg {
+    font-size: 14px;
+}
+
+.feira-status {
+    order: 1;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    letter-spacing: 0.2px;
+}
+
 /* =========================
    CONTEÚDO DO CARD
 ========================= */
@@ -156,15 +198,6 @@
 .linha-topo small {
     color: #888;
     font-size: 12px;
-}
-
-.feira-status {
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    white-space: nowrap;
-    letter-spacing: 0.2px;
 }
 
 /* =========================

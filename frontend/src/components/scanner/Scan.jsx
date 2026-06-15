@@ -117,9 +117,9 @@ const Scan = () => {
     }
 
     const handleCancel = () => {
-        stopWebcam()
-        navigate(`/feira/${id}`)
-    }
+        stopWebcam();
+        navigate(`/feira/${id}`, { replace: true });
+    };
 
     return (
         <div className="scanner-container">

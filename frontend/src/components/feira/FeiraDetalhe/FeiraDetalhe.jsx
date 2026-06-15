@@ -32,7 +32,7 @@ const FeiraDetalhe = () => {
     };
 
     const handleBack = () => {
-        navigate(-1);
+        navigate("/feiras", { replace: true });
     };
 
     const handleScanProduct = () => {
