@@ -83,7 +83,7 @@ const FeiraDetalhe = () => {
     const feiraData = feira;
     const gastoParcial = (feiraData.itens || []).reduce((total, item) => total + (item.subtotal || 0), 0);
     const economiaParcial = (feiraData.itens || [])
-        .filter(item => item.tipo === "atacado" && item.preco_atacado)
+        .filter(item => item.preco_escolhido === item.preco_atacado && item.preco_atacado)
         .reduce((total, item) => total + ((item.quantidade || 0) * ((item.preco_varejo || 0) - (item.preco_atacado || 0))), 0);
     const getStatusConfig = (status) =>
         STATUS_CONFIG[status] || {
@@ -145,7 +145,10 @@ const FeiraDetalhe = () => {
                         {(feiraData.itens && feiraData.itens.length > 0) ? (
                             <div className="itens-list">
                                 {feiraData.itens.map((item) => {
-                                    const economia = item.preco_atacado && item.tipo === "atacado"
+                                    const economia = item.preco_atacado && item.preco_escolhido === item.preco_atacado
+                                        ? (item.preco_varejo - item.preco_atacado) * item.quantidade
+                                        : 0;
+                                    const deixou_economia = item.preco_atacado && item.preco_escolhido === item.preco_varejo && item.preco_atacado !== item.preco_varejo
                                         ? (item.preco_varejo - item.preco_atacado) * item.quantidade
                                         : 0;
                                     return (
@@ -160,6 +163,7 @@ const FeiraDetalhe = () => {
                                             unidade={item.unidade_medida}
                                             valorUnitario={item.preco_escolhido}
                                             economia={economia}
+                                            deixou_economia={deixou_economia}
                                         />
                                     );
                                 })}
@@ -190,7 +194,7 @@ const FeiraDetalhe = () => {
     );
 };
 
-const ItemCard = ({ nome, preco, precoVarejo, precoAtacado, quantidade, tipo, unidade, economia, valorUnitario }) => {
+const ItemCard = ({ nome, preco, precoVarejo, precoAtacado, quantidade, tipo, unidade, economia, valorUnitario, deixou_economia }) => {
 
     function saberTipoAtacadoVarejo(valorUnitario, precoAtacado, precoVarejo) {
         if (valorUnitario === precoAtacado) return "atacado";
@@ -212,25 +216,31 @@ const ItemCard = ({ nome, preco, precoVarejo, precoAtacado, quantidade, tipo, un
                 <div>
                     <h4>{nome}</h4>
                     <div className="item-tipo">
-                        <span style={{ backgroundColor: tipoConfig[tipoItem].bg, color: tipoConfig[tipoItem].color, marginRight: 6 }}>
-                            {tipoConfig[tipoItem].label}
+                        <span style={{ backgroundColor: tipoConfig[tipoItem]?.bg, color: tipoConfig[tipoItem]?.color, marginRight: 6 }}>
+                            {tipoConfig[tipoItem]?.label}
                         </span>
                         <span className="item-quantidade">{quantidade} un</span>
                     </div>
                     <div className="item-meta">
                         {economia > 0 && (
-                            <span className="item-economia">• Economizou R$ {economia.toFixed(2).replace('.', ',')}</span>
+                            <span className="item-economia">↗ Economizou R$ {economia.toFixed(2).replace('.', ',')}</span>
+                        )}
+                        {deixou_economia > 0 && (
+                            <span className="item-perdeu">↘ Poderia economizar {deixou_economia.toFixed(2).replace('.', ',')}</span>
                         )}
                     </div>
                     <div className="item-preco-unidade">
-                        {precoAtacado
-                            ? <>
-                                R$ {valorUnitario.toFixed(2).replace('.', ',')}/un • De R$ {precoVarejo.toFixed(2).replace('.', ',')}
-                            </>
-                            : <>
-                                R$ {precoVarejo.toFixed(2).replace('.', ',')}/un
-                            </>
-                        }
+                        {precoAtacado && precoAtacado > 0 ? (
+                            preco === precoAtacado ? (
+                                <>R$ {preco.toFixed(2).replace('.', ',')}/un • De R$ {precoVarejo.toFixed(2).replace('.', ',')}</>
+                            ) : (
+                                <>
+                                    R$ {preco.toFixed(2).replace('.', ',')}/un • <span style={{ color: '#3B82f6' }}>Atacado: R$ {precoAtacado.toFixed(2).replace('.', ',')}</span>
+                                </>
+                            )
+                        ) : (
+                            <>R$ {preco.toFixed(2).replace('.', ',')}/un</>
+                        )}
                     </div>
                 </div>
             </div>

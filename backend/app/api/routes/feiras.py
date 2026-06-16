@@ -28,7 +28,10 @@ async def criar_feira(
     session: Session = Depends(pegar_session),
     usuario: Usuario = Depends(verify_token),
 ):
-    feira_db = session.query(Feira).filter(Feira.nome == feiraSchema.nome).first()  # type: ignore
+    feira_db = session.query(Feira).filter(
+        Feira.nome== feiraSchema.nome,
+        Feira.usuario_id == usuario.id
+    ).first()
     if feira_db:
         raise HTTPException(status_code=400, detail="Feira já existe")
 

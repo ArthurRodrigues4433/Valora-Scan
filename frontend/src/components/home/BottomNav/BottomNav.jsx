@@ -1,5 +1,5 @@
 import "./BottomNav.css";
-import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { IoHomeOutline } from "react-icons/io5";
 import { BsCart4 } from "react-icons/bs";
 import { IoTimeOutline } from "react-icons/io5";
@@ -12,14 +12,16 @@ const bottomNavData = [
     { id: 4, icon: <RxAvatar />, label: "Perfil", to: "/perfil" },
 ];
 
-const BottomNav = ({ activeId = 1, onChange }) => {
+const BottomNav = ({ activeId = 1 }) => {
+    const navigate = useNavigate();
+    
     return (
         <section className="bottom-nav">
             {bottomNavData.map((action) => (
                 <div
                     key={action.id}
                     className={"card-nav" + (activeId === action.id ? " active" : "")}
-                    onClick={() => onChange && onChange(action.id)}
+                    onClick={() => navigate(action.to)}
                 >
                     <QuickBottomNav icon={action.icon} label={action.label} />
                 </div>

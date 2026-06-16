@@ -11,6 +11,7 @@ import PrivateRoute from "../components/auth/PrivateRoute";
 export default function AppRoutes() {
     return (
         <Routes>
+            <Route path="/" element={<Login />} />
             <Route path="/auth/login" element={<Login />} />
             <Route path="/auth/register" element={<Register />} />
             <Route element={<PrivateRoute />}>

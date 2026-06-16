@@ -3,6 +3,7 @@ import "./Feira.css";
 import { IoAdd, IoTrashOutline } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
 import api from "../../services/api";
+import BottomNav from "../home/BottomNav/BottomNav";
 
 const STATUS_CONFIG = {
     em_andamento: { label: "Em andamento", color: "#e6a817", bg: "rgba(230, 168, 23, 0.1)" },
@@ -86,7 +87,7 @@ const Feira = () => {
             setNome("");
             setOrcamento("");
             await fetchFeiras();
-            navigate(`/home#feira}`);
+            navigate("/feiras");
         } catch (error) {
             console.error("Erro ao criar feira:", error);
             alert(error.response?.data?.detail || "Erro ao criar feira");
@@ -100,7 +101,7 @@ const Feira = () => {
         setNome("");
         setOrcamento("");
     };
-    
+
     const handleDelete = async (event, id, nome) => {
         event.stopPropagation();
 
@@ -118,16 +119,21 @@ const Feira = () => {
 
     if (loading) {
         return (
-            <div className="feira-container">
-                <div className="feira-header">
-                    <h2 className="feira-title">Minhas Feiras</h2>
-                    <button className="btn-nova-feira" onClick={() => setShowModal(true)}>
-                        <IoAdd /> Nova feira
-                    </button>
+            <div className="container-geral">
+                <div className="main-content">
+                    <div className="feira-container">
+                        <div className="feira-header">
+                            <h2 className="feira-title">Minhas Feiras</h2>
+                            <button className="btn-nova-feira" onClick={() => setShowModal(true)}>
+                                <IoAdd /> Nova feira
+                            </button>
+                        </div>
+                        <div className="loading-state">
+                            <div className="spinner"></div>
+                        </div>
+                    </div>
                 </div>
-                <div className="loading-state">
-                    <div className="spinner"></div>
-                </div>
+                <BottomNav activeId={2} />
             </div>
         );
     }
@@ -137,120 +143,126 @@ const Feira = () => {
     );
 
     return (
-        <div className="feira-container">
-            <div className="feira-header">
-                <h2 className="feira-title">Minhas Feiras</h2>
-                <button
-                    className="btn-nova-feira"
-                    onClick={() => setShowModal(true)}
-                    disabled={hasActiveFeira}
-                    title={
-                        hasActiveFeira
-                            ? "Finalize ou cancele a feira atual antes de criar uma nova"
-                            : ""
-                    }
-                >
-                    <IoAdd /> Nova feira
-                </button>
-            </div>
-            {hasActiveFeira && (
-                <p className="feira-header-alert">
-                    Finalize ou cancele a feira atual antes de criar uma nova
-                </p>
-            )}
-
-            {feiras.length === 0 ? (
-                <div className="feira-empty">
-                    <div className="empty-icon">
-                        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                            <path d="M3 3h18v18H3zM3 9h18M9 21V9" />
-                        </svg>
+        <div className="container-geral">
+            <div className="main-content">
+                <div className="feira-container">
+                    <div className="feira-header">
+                        <h2 className="feira-title">Minhas Feiras</h2>
+                        <button
+                            className="btn-nova-feira"
+                            onClick={() => setShowModal(true)}
+                            disabled={hasActiveFeira}
+                            title={
+                                hasActiveFeira
+                                    ? "Finalize ou cancele a feira atual antes de criar uma nova"
+                                    : ""
+                            }
+                        >
+                            <IoAdd /> Nova feira
+                        </button>
                     </div>
-                    <h4>Nenhuma feira registrada</h4>
-                    <p>Crie sua primeira feira para começar a controlar seus gastos</p>
-                    <button className="btn-nova-feira btn-empty" onClick={() => setShowModal(true)}>
-                        <IoAdd /> Nova feira
-                    </button>
-                </div>
-            ) : (
-                <div className="feira-list">
-                    {(() => {
-                        const ativas = feiras.filter(
-                            (f) => f.status === "em_andamento" || f.status === "andamento" || f.status === "pausada"
-                        );
-                        const finalizadas = feiras.filter(
-                            (f) => f.status === "finalizada" || f.status === "cancelada"
-                        );
+                    {hasActiveFeira && (
+                        <p className="feira-header-alert">
+                            Finalize ou cancele a feira atual antes de criar uma nova
+                        </p>
+                    )}
 
-                        const renderSection = (titulo, lista) => {
-                            if (lista.length === 0) return null;
-                            return (
-                                <div className="feira-section">
-                                    <h4 className="feira-section-title">{titulo}</h4>
-                                    <div className="feira-section-list">
-                                        {lista.map((feira) => (
-                                            <FeiraCardItem
-                                                key={feira.id}
-                                                feira={feira}
-                                                onClick={(id) => navigate(`/feira/${id}`)}
-                                                onDelete={handleDelete}
-                                            />
-                                        ))}
-                                    </div>
+                    {feiras.length === 0 ? (
+                        <div className="feira-empty">
+                            <div className="empty-icon">
+                                <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                                    <path d="M3 3h18v18H3zM3 9h18M9 21V9" />
+                                </svg>
+                            </div>
+                            <h4>Nenhuma feira registrada</h4>
+                            <p>Crie sua primeira feira para começar a controlar seus gastos</p>
+                            <button className="btn-nova-feira btn-empty" onClick={() => setShowModal(true)}>
+                                <IoAdd /> Nova feira
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="feira-list">
+                            {(() => {
+                                const ativas = feiras.filter(
+                                    (f) => f.status === "em_andamento" || f.status === "andamento" || f.status === "pausada"
+                                );
+                                const finalizadas = feiras.filter(
+                                    (f) => f.status === "finalizada" || f.status === "cancelada"
+                                );
+
+                                const renderSection = (titulo, lista) => {
+                                    if (lista.length === 0) return null;
+                                    return (
+                                        <div className="feira-section">
+                                            <h4 className="feira-section-title">{titulo}</h4>
+                                            <div className="feira-section-list">
+                                                {lista.map((feira) => (
+                                                    <FeiraCardItem
+                                                        key={feira.id}
+                                                        feira={feira}
+                                                        onClick={(id) => navigate(`/feira/${id}`)}
+                                                        onDelete={handleDelete}
+                                                    />
+                                                ))}
+                                            </div>
+                                        </div>
+                                    );
+                                };
+
+                                return (
+                                    <>
+                                        {renderSection("Feiras ativas", ativas)}
+                                        {renderSection("Feiras finalizadas", finalizadas)}
+                                    </>
+                                );
+                            })()}
+                        </div>
+                    )}
+
+                    {showModal && (
+                        <div className="modal-overlay" onClick={handleCancel}>
+                            <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+                                <h3>Nova feira</h3>
+                                <div className="modal-field">
+                                    <label>Nome da feira</label>
+                                    <input
+                                        type="text"
+                                        placeholder="Ex: Feira Semanal"
+                                        value={nome}
+                                        onChange={(e) => setNome(e.target.value)}
+                                        autoFocus
+                                    />
                                 </div>
-                            );
-                        };
-
-                        return (
-                            <>
-                                {renderSection("Feiras ativas", ativas)}
-                                {renderSection("Feiras finalizadas", finalizadas)}
-                            </>
-                        );
-                    })()}
+                                <div className="modal-field">
+                                    <label>Orçamento (R$)</label>
+                                    <input
+                                        type="number"
+                                        placeholder="Ex: 500"
+                                        value={orcamento}
+                                        onChange={(e) => setOrcamento(e.target.value)}
+                                        min="0"
+                                        step="0.01"
+                                    />
+                                </div>
+                                <div className="modal-actions">
+                                    <button className="btn-cancelar" onClick={handleCancel} disabled={saving}>
+                                        Cancelar
+                                    </button>
+                                    <button
+                                        className="btn-criar"
+                                        onClick={handleCreate}
+                                        disabled={saving || !nome.trim() || !orcamento}
+                                    >
+                                        {saving ? "Criando..." : "Criar feira"}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
-            )}
+            </div>
 
-            {showModal && (
-                <div className="modal-overlay" onClick={handleCancel}>
-                    <div className="modal-box" onClick={(e) => e.stopPropagation()}>
-                        <h3>Nova feira</h3>
-                        <div className="modal-field">
-                            <label>Nome da feira</label>
-                            <input
-                                type="text"
-                                placeholder="Ex: Feira Semanal"
-                                value={nome}
-                                onChange={(e) => setNome(e.target.value)}
-                                autoFocus
-                            />
-                        </div>
-                        <div className="modal-field">
-                            <label>Orçamento (R$)</label>
-                            <input
-                                type="number"
-                                placeholder="Ex: 500"
-                                value={orcamento}
-                                onChange={(e) => setOrcamento(e.target.value)}
-                                min="0"
-                                step="0.01"
-                            />
-                        </div>
-                        <div className="modal-actions">
-                            <button className="btn-cancelar" onClick={handleCancel} disabled={saving}>
-                                Cancelar
-                            </button>
-                            <button
-                                className="btn-criar"
-                                onClick={handleCreate}
-                                disabled={saving || !nome.trim() || !orcamento}
-                            >
-                                {saving ? "Criando..." : "Criar feira"}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
+            <BottomNav activeId={2} />
         </div>
     );
 };

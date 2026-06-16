@@ -350,6 +350,12 @@
     font-weight: 600;
 }
 
+.item-perdeu {
+    font-size: 11px;
+    color: #e74c3c;
+    font-weight: 600;
+}
+
 .item-preco-unidade {
     font-size: 11px;
     color: #888;
