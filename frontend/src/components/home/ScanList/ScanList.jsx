@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import "./ScanList.css";
 import ScanCard from "../ScanCard/ScanCard";
 import api from "../../../services/api";
@@ -6,14 +6,20 @@ import api from "../../../services/api";
 const ScanList = () => {
     const [scans, setScans] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [mostrarMais, setMostrarMais] = useState(false);
+    const [erro, setErro] = useState(null);
+    const MAX_SCANS = 5;
 
     useEffect(() => {
         const fetchScans = async () => {
             try {
-                const response = await api.get("/notas/scans");
-                setScans(response.data);
+                setErro(null);
+                const { data } = await api.get("/notas/scans");
+                setScans(Array.isArray(data) ? data : []);
             } catch (error) {
                 console.error("Erro ao buscar scans:", error);
+                setErro(error);
+                setScans([]);
             } finally {
                 setLoading(false);
             }
@@ -21,12 +27,50 @@ const ScanList = () => {
         fetchScans();
     }, []);
 
+    const ordenados = useMemo(() => {
+        return [...scans].sort((a, b) => {
+            const da = a?.data ? new Date(a.data).getTime() : 0;
+            const db = b?.data ? new Date(b.data).getTime() : 0;
+
+            if (da !== db) return db - da;
+
+            return (b?.id || 0) - (a?.id || 0);
+        });
+    }, [scans]);
+
+    const exibidos = mostrarMais ? ordenados : ordenados.slice(0, MAX_SCANS);
+    const temMais = ordenados.length > MAX_SCANS;
+
+    const tentarNovamente = () => {
+        setLoading(true);
+        setErro(null);
+        api.get("/notas/scans")
+            .then(res => setScans(Array.isArray(res.data) ? res.data : []))
+            .catch(error => {
+                console.error("Erro ao buscar scans:", error);
+                setErro(error);
+            })
+            .finally(() => setLoading(false));
+    };
+
     if (loading) {
         return (
             <section className="container-scans">
                 <SectionTitle title="Últimos scans" />
                 <div className="loading-state">
                     <div className="spinner"></div>
+                </div>
+            </section>
+        );
+    }
+
+    if (erro) {
+        return (
+            <section className="container-scans">
+                <SectionTitle title="Últimos scans" />
+                <div className="error-state">
+                    <p>Não foi possível carregar os scans</p>
+                    <button className="btn-primary" onClick={tentarNovamente}>Tentar novamente</button>
                 </div>
             </section>
         );
@@ -44,15 +88,20 @@ const ScanList = () => {
     return (
         <section className="container-scans">
             <SectionTitle title="Últimos scans" />
-            {scans.map((scan) => (
+            {exibidos.map((scan) => (
                 <ScanCard
                     key={scan.id}
                     nome={scan.nome}
-                    preco={`R$ ${scan.preco.toFixed(2).replace('.', ',')}`}
-                    economia={scan.economia !== 0 ? `R$ ${scan.economia.toFixed(2).replace('.', ',')}` : "-"}
+                    preco={`R$ ${Number(scan.preco).toFixed(2).replace(".", ",")}`}
+                    economia={scan.economia !== 0 ? `R$ ${Number(scan.economia).toFixed(2).replace(".", ",")}` : "-"}
                     tempo={scan.tempo}
                 />
             ))}
+            {temMais && (
+                <button className="btn-ver-mais" onClick={() => setMostrarMais(true)}>
+                    Ver mais ({ordenados.length - MAX_SCANS})
+                </button>
+            )}
         </section>
     );
 };

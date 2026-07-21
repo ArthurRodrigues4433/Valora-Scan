@@ -101,6 +101,22 @@
     }
 }
 
+.btn-ver-mais {
+    width: 100%;
+    margin-top: 6px;
+    padding: 10px;
+    border: none;
+    background: transparent;
+    color: var(--primary-color);
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+.btn-ver-mais:hover {
+    background: rgba(0, 0, 0, 0.03);
+}
+
 @media (min-width: 768px) {
     .container-feiras {
         max-width: 700px;

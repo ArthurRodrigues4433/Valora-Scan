@@ -28,3 +28,4 @@ app.include_router(ocr_router)
 app.include_router(notas_router)
 
 # uvicorn app.main:app --reload
+# uvicorn app.main:app --reload --reload-dir app
