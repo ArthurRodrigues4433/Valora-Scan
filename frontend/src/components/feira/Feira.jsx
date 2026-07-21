@@ -123,7 +123,7 @@ const Feira = () => {
                 <div className="main-content">
                     <div className="feira-container">
                         <div className="feira-header">
-                            <h2 className="feira-title">Minhas Feiras</h2>
+                            <h2 className="feira-title">Minhas Compras</h2>
                             <button className="btn-nova-feira" onClick={() => setShowModal(true)}>
                                 <IoAdd /> Nova feira
                             </button>
@@ -147,7 +147,7 @@ const Feira = () => {
             <div className="main-content">
                 <div className="feira-container">
                     <div className="feira-header">
-                        <h2 className="feira-title">Minhas Feiras</h2>
+                        <h2 className="feira-title">Minhas Compras</h2>
                         <button
                             className="btn-nova-feira"
                             onClick={() => setShowModal(true)}
@@ -211,8 +211,8 @@ const Feira = () => {
 
                                 return (
                                     <>
-                                        {renderSection("Feiras ativas", ativas)}
-                                        {renderSection("Feiras finalizadas", finalizadas)}
+                                        {renderSection("Ativas", ativas)}
+                                        {renderSection("Finalizadas", finalizadas)}
                                     </>
                                 );
                             })()}

@@ -22,11 +22,11 @@ def calcular_economia_mensal(usuario_id: int, session: Session):
     )
 
     gasto_real = (
-        session.query(func.coalesce(func.sum(NotaFiscal.valor_total), Decimal("0")))
-        .join(Feira, NotaFiscal.feira_id == Feira.id)
+        session.query(func.coalesce(func.sum(FeiraItem.subtotal), Decimal("0")))
+        .join(Feira, FeiraItem.feira_id == Feira.id)
         .filter(
             Feira.usuario_id == usuario_id,
-            NotaFiscal.data_compra >= primeiro_dia_mes,
+            FeiraItem.created_at >= primeiro_dia_mes,
         )
         .scalar()
     )
@@ -41,12 +41,11 @@ def calcular_economia_mensal(usuario_id: int, session: Session):
 
     # Contagem de itens escaneados (NotaFiscalItem) no mês atual
     itens_escaneados = (
-        session.query(func.count(NotaFiscalItem.id))
-        .join(NotaFiscal, NotaFiscalItem.nota_fiscal_id == NotaFiscal.id)
-        .join(Feira, NotaFiscal.feira_id == Feira.id)
+        session.query(func.count(FeiraItem.id))
+        .join(Feira, FeiraItem.feira_id == Feira.id)
         .filter(
             Feira.usuario_id == usuario_id,
-            NotaFiscal.data_compra >= primeiro_dia_mes,
+            FeiraItem.created_at >= primeiro_dia_mes,
         )
         .scalar()
     ) or 0

@@ -2,10 +2,14 @@
    SEÇÕES
 ========================= */
 
-.container-feiras,
-.container-scans {
-    margin-top: 24px;
+.container-feiras {
+    margin-top: 16px;
     padding: 0 16px;
+}
+
+.lista-feiras {
+    max-height: 420px;
+    overflow-y: auto;
 }
 
 .section-title {

@@ -3,8 +3,13 @@
 ========================= */
 
 .container-scans {
-    margin-top: 24px;
+    margin-top: 16px;
     padding: 0 16px;
+}
+
+.lista-scans {
+    max-height: 320px;
+    overflow-y: auto;
 }
 
 .section-title {

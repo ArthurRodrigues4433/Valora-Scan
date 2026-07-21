@@ -14,8 +14,8 @@ def listar_feiras_resumo(usuario_id: int, session: Session) -> list[dict]:
     result = []
     for feira in feiras_db:
         gasto_real = (
-            session.query(func.coalesce(func.sum(NotaFiscal.valor_total), Decimal("0")))
-            .filter(NotaFiscal.feira_id == feira.id)
+            session.query(func.coalesce(func.sum(FeiraItem.subtotal), Decimal("0")))
+            .filter(FeiraItem.feira_id == feira.id)
             .scalar()
         )
 

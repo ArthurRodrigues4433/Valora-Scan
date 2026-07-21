@@ -6,9 +6,7 @@ import api from "../../../services/api";
 const ScanList = () => {
     const [scans, setScans] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [mostrarMais, setMostrarMais] = useState(false);
     const [erro, setErro] = useState(null);
-    const MAX_SCANS = 5;
 
     useEffect(() => {
         const fetchScans = async () => {
@@ -37,9 +35,6 @@ const ScanList = () => {
             return (b?.id || 0) - (a?.id || 0);
         });
     }, [scans]);
-
-    const exibidos = mostrarMais ? ordenados : ordenados.slice(0, MAX_SCANS);
-    const temMais = ordenados.length > MAX_SCANS;
 
     const tentarNovamente = () => {
         setLoading(true);
@@ -88,20 +83,17 @@ const ScanList = () => {
     return (
         <section className="container-scans">
             <SectionTitle title="Últimos scans" />
-            {exibidos.map((scan) => (
-                <ScanCard
-                    key={scan.id}
-                    nome={scan.nome}
-                    preco={`R$ ${Number(scan.preco).toFixed(2).replace(".", ",")}`}
-                    economia={scan.economia !== 0 ? `R$ ${Number(scan.economia).toFixed(2).replace(".", ",")}` : "-"}
-                    tempo={scan.tempo}
-                />
-            ))}
-            {temMais && (
-                <button className="btn-ver-mais" onClick={() => setMostrarMais(true)}>
-                    Ver mais ({ordenados.length - MAX_SCANS})
-                </button>
-            )}
+            <div className="lista-scans">
+                {ordenados.map((scan) => (
+                    <ScanCard
+                        key={scan.id}
+                        nome={scan.nome}
+                        preco={`R$ ${Number(scan.preco).toFixed(2).replace(".", ",")}`}
+                        economia={scan.economia !== 0 ? `R$ ${Number(scan.economia).toFixed(2).replace(".", ",")}` : "-"}
+                        tempo={scan.tempo}
+                    />
+                ))}
+            </div>
         </section>
     );
 };
@@ -121,7 +113,7 @@ const EmptyStateScans = () => (
 const SectionTitle = ({ title }) => (
     <div className="section-title">
         <h3>{title}</h3>
-        <button>Ver tudo</button>
+        <button></button>
     </div>
 );
 

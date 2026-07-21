@@ -38,24 +38,39 @@ const FeiraCard = ({ id, nome, data, status, economia, gastoAtual, gastoTotal, p
                 <span>{gastoAtual} / {gastoTotal}</span>
             </div>
 
+            <div className="linha-progresso">
+                <span>Progresso</span>
+                <span>{progresso}%</span>
+            </div>
+
+            <ProgressBar progresso={progresso} />
+
+            <div className="texto-progresso">
+                {gastoAtual} de {gastoTotal} utilizados
+            </div>
+
             <div className="linha-economia">
                 <span>Economia</span>
                 <strong>R$ {economia}</strong>
             </div>
-
-            <ProgressBar progresso={progresso} />
         </div>
     );
 };
 
-const ProgressBar = ({ progresso }) => (
-    <div className="barra">
-        <div 
-            className="progresso" 
-            style={{ width: `${progresso}%` }}
-        ></div>
-    </div>
-);
+const ProgressBar = ({ progresso }) => {
+    let cor = '#2f8d3f';
+    if (progresso >= 80) cor = '#e74c3c';
+    else if (progresso >= 50) cor = '#e6a817';
+
+    return (
+        <div className="barra">
+            <div
+                className="progresso"
+                style={{ width: `${progresso}%`, background: cor }}
+            ></div>
+        </div>
+    );
+};
 
 export default FeiraCard;
 export { ProgressBar };

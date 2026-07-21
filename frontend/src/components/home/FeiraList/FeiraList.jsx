@@ -7,9 +7,7 @@ import api from "../../../services/api";
 const FeiraList = () => {
     const [feiras, setFeiras] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [mostrarMais, setMostrarMais] = useState(false);
     const [erro, setErro] = useState(null);
-    const MAX_FEIRAS = 5;
 
     useEffect(() => {
         const buscar = async () => {
@@ -50,9 +48,6 @@ const FeiraList = () => {
         });
     }, [feiras]);
 
-    const exibidas = mostrarMais ? ordenadas : ordenadas.slice(0, MAX_FEIRAS);
-    const temMais = ordenadas.length > MAX_FEIRAS;
-
     const tentarNovamente = () => {
         setLoading(true);
         setErro(null);
@@ -91,7 +86,7 @@ const FeiraList = () => {
     if (ordenadas.length === 0) {
         return (
             <section className="container-feiras">
-                <SectionTitle title="Feiras recentes" />
+                <SectionTitle title="Compras recentes" />
                 <EmptyState />
             </section>
         );
@@ -99,25 +94,22 @@ const FeiraList = () => {
 
     return (
         <section className="container-feiras">
-            <SectionTitle title="Feiras recentes" />
-            {exibidas.map((f) => (
-                <FeiraCard
-                    key={f.id}
-                    id={f.id}
-                    nome={f.nome}
-                    data={f.dataFormatada || f.data}
-                    status={f.status}
-                    economia={Number(f.economia).toFixed(2).replace(".", ",")}
-                    gastoAtual={`R$ ${Number(f.gasto_atual).toFixed(2).replace(".", ",")}`}
-                    gastoTotal={`R$ ${Number(f.gasto_total).toFixed(2).replace(".", ",")}`}
-                    progresso={f.progresso}
-                />
-            ))}
-            {temMais && (
-                <button className="btn-ver-mais" onClick={() => setMostrarMais(true)}>
-                    Ver mais ({ordenadas.length - MAX_FEIRAS})
-                </button>
-            )}
+            <SectionTitle title="Compras recentes" />
+            <div className="lista-feiras">
+                {ordenadas.map((f) => (
+                    <FeiraCard
+                        key={f.id}
+                        id={f.id}
+                        nome={f.nome}
+                        data={f.dataFormatada || f.data}
+                        status={f.status}
+                        economia={Number(f.economia).toFixed(2).replace(".", ",")}
+                        gastoAtual={`R$ ${Number(f.gasto_atual).toFixed(2).replace(".", ",")}`}
+                        gastoTotal={`R$ ${Number(f.gasto_total).toFixed(2).replace(".", ",")}`}
+                        progresso={f.progresso}
+                    />
+                ))}
+            </div>
         </section>
     );
 };

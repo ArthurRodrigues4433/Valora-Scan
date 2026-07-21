@@ -87,11 +87,27 @@
     flex-shrink: 0;
 }
 
+.linha-progresso {
+    display: flex;
+    justify-content: space-between;
+    margin: 14px 0 6px;
+    font-size: 12px;
+    color: #888;
+    font-weight: 500;
+}
+
+.texto-progresso {
+    font-size: 11px;
+    color: #999;
+    margin-top: 4px;
+    text-align: right;
+}
+
 .linha-economia {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin: 14px 0 10px;
+    margin: 16px 0 6px;
     font-size: 13px;
 }
 
