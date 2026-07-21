@@ -3,13 +3,13 @@ import { Link } from "react-router-dom";
 import { RiQrScan2Line } from "react-icons/ri";
 import { TbReplace } from "react-icons/tb";
 import { BsCart4 } from "react-icons/bs";
-import { IoTimeOutline } from "react-icons/io5";
+import { IoPricetag } from "react-icons/io5";
 
 const quickActionsData = [
     { id: 1, icon: <RiQrScan2Line />, label: "Novo Scan", to: "/scan" },
     { id: 2, icon: <BsCart4 />, label: "Nova Feira", to: "/feiras" },
     { id: 3, icon: <TbReplace />, label: "Comparar", to: "/comparar" },
-    { id: 4, icon: <IoTimeOutline />, label: "Histórico", to: "/historico" },
+    { id: 4, icon: <IoPricetag />, label: "Economia", to: "/economia" },
 ];
 
 const QuickActions = () => {

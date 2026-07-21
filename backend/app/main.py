@@ -18,6 +18,7 @@ from app.api.routes.usuarios import usuarios_router
 from app.api.routes.relatorios import relatorios_router
 from app.api.routes.ocr import ocr_router
 from app.api.routes.notas import notas_router
+from app.api.routes.perfil import perfil_router
 
 app.include_router(auth_router)
 app.include_router(feiras_router)
@@ -26,6 +27,7 @@ app.include_router(usuarios_router)
 app.include_router(relatorios_router)
 app.include_router(ocr_router)
 app.include_router(notas_router)
+app.include_router(perfil_router)
 
 # uvicorn app.main:app --reload
 # uvicorn app.main:app --reload --reload-dir app

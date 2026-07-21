@@ -8,7 +8,7 @@ import { RxAvatar } from "react-icons/rx";
 const bottomNavData = [
     { id: 1, icon: <IoHomeOutline />, label: "Home", to: "/home" },
     { id: 2, icon: <BsCart4 />, label: "Feira", to: "/feiras" },
-    { id: 3, icon: <IoTimeOutline />, label: "Histórico", to: "/historico" },
+    { id: 3, icon: <IoTimeOutline />, label: "Economia", to: "/economia" },
     { id: 4, icon: <RxAvatar />, label: "Perfil", to: "/perfil" },
 ];
 

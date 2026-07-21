@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "./Home.css";
 import Header from "./Header/Header";
-import QuickActions from "./QuickActions/QuickActions";
+// import QuickActions from "./QuickActions/QuickActions"; //
 import Stats from "./Stats/Stats";
 import FeiraList from "./FeiraList/FeiraList";
 import ScanList from "./ScanList/ScanList";
@@ -13,7 +13,7 @@ const Home = () => {
         <div className="container-geral">
             <div className="main-content">
                 <Header />
-                <QuickActions />
+                {/* <QuickActions />  // <-- desativado temporariamente */}
                 <Stats />
                 <FeiraList />
                 <ScanList />

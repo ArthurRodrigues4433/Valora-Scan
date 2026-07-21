@@ -61,37 +61,44 @@ const Confirmacao = () => {
         navigate(`/feira/${id}`, { replace: true });
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-        if (!produto.nome || !produto.preco_varejo) {
-            alert('Nome e preço varejo são obrigatórios')
-            return
-        }
-        if (quantidade === '' || parseInt(quantidade) < 1) {
-            alert('Quantidade deve ser maior que 0')
-            return
-        }
-
-        setSubmitting(true)
-        try {
-            await api.post(`/feiras/feira/${id}/itens`, {
-                nome: produto.nome,
-                preco_varejo: parseFloat(produto.preco_varejo),
-                preco_atacado: parseFloat(produto.preco_atacado) || 0,
-                qtd_minima_atacado: parseInt(produto.qtd_minima_atacado) || 0,
-                quantidade: quantidadeNum,
-                unidade_medida: produto.unidade_medida || null,
-                imagem_url: produto.imagem_url || null,
-                ocr_texto: ocrTexto
-            })
-            navigate(`/feira/${id}`)
-        } catch (error) {
-            console.error('Erro ao adicionar item:', error)
-            alert('Erro ao adicionar produto à feira')
-        } finally {
-            setSubmitting(false)
-        }
+    const parseNumber = (value) => {
+        if (!value || value === '') return null;
+        const normalized = String(value).replace(',', '.');
+        const num = parseFloat(normalized);
+        return isNaN(num) ? null : num;
     }
+
+    const handleSubmit = async (e) => {
+    e.preventDefault()
+    if (!produto.nome || !produto.preco_varejo) {
+        alert('Nome e preço varejo são obrigatórios')
+        return
+    }
+    if (quantidade === '' || parseInt(quantidade) < 1) {
+        alert('Quantidade deve ser maior que 0')
+        return
+    }
+
+    setSubmitting(true)
+    try {
+        await api.post(`/feiras/feira/${id}/itens`, {
+            nome: produto.nome,
+            preco_varejo: parseNumber(produto.preco_varejo),
+            preco_atacado: parseNumber(produto.preco_atacado),
+            qtd_minima_atacado: produto.qtd_minima_atacado ? parseInt(produto.qtd_minima_atacado) : null,
+            quantidade: quantidadeNum,
+            unidade_medida: produto.unidade_medida || null,
+            imagem_url: produto.imagem_url || null,
+            ocr_texto: ocrTexto
+        })
+        navigate(`/feira/${id}`)
+    } catch (error) {
+        console.error('Erro ao adicionar item:', error)
+        alert('Erro ao adicionar produto à feira')
+    } finally {
+        setSubmitting(false)
+    }
+}
 
     return (
         <div className="confirmacao-container">

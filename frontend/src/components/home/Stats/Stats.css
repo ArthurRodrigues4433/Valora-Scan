@@ -7,6 +7,7 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px;
     padding: 0 16px;
+    margin-top: 16px;
 }
 
 .card-estatistica {

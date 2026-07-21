@@ -6,6 +6,8 @@ import Scan from "../components/scanner/Scan";
 import Confirmacao from "../components/scanner/Confirmacao";
 import Feira from "../components/feira/Feira";
 import FeiraDetalhe from "../components/feira/FeiraDetalhe/FeiraDetalhe";
+import Economia from "../components/economia/Economia";
+import Perfil from "../components/perfil/Perfil";
 import PrivateRoute from "../components/auth/PrivateRoute";
 
 export default function AppRoutes() {
@@ -20,6 +22,8 @@ export default function AppRoutes() {
                 <Route path="/feira/:id" element={<FeiraDetalhe />} />
                 <Route path="/feira/:id/scan" element={<Scan />} />
                 <Route path="/feira/:id/confirmar" element={<Confirmacao />} />
+                <Route path="/economia" element={<Economia />} />
+                <Route path="/perfil" element={<Perfil />} />
             </Route>
         </Routes>
     )
