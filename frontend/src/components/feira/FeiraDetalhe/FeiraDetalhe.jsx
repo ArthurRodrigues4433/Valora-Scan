@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import "./FeiraDetalhe.css";
-import { IoScan, IoArrowBack, IoCheckmarkCircle } from "react-icons/io5";
+import { IoScan, IoArrowBack } from "react-icons/io5";
 import api from "../../../services/api";
 
 const STATUS_CONFIG = {
@@ -17,7 +17,6 @@ const FeiraDetalhe = () => {
     const navigate = useNavigate();
     const [feira, setFeira] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [finalizing, setFinalizing] = useState(false);
 
     const fetchFeira = async () => {
         setLoading(true);
@@ -57,19 +56,8 @@ const FeiraDetalhe = () => {
         navigate(`/feira/${id}/scan`);
     };
 
-    const handleFinalizar = async () => {
-        if (window.confirm("Deseja realmente finalizar esta feira?")) {
-            setFinalizing(true);
-            try {
-                await api.put(`/feiras/feira/${id}`, { status: "finalizada" });
-                setFeira(prev => ({ ...prev, status: "finalizada" }));
-            } catch (error) {
-                console.error("Erro ao finalizar feira:", error);
-                alert("Erro ao finalizar feira");
-            } finally {
-                setFinalizing(false);
-            }
-        }
+    const handleScanNFCe = () => {
+        navigate(`/feira/${id}/scan-nfce`);
     };
 
     useEffect(() => {
@@ -140,6 +128,12 @@ const FeiraDetalhe = () => {
                         <IoScan /> Escanear novo produto
                     </button>
 
+                    {(feiraData.status === "em_andamento" || feiraData.status === "pausada" || feiraData.status === "andamento") && feiraData.itens && feiraData.itens.length > 0 && (
+                        <button className="btn-scan-nfce" onClick={handleScanNFCe}>
+                            <IoScan /> Escanear NFCe da nota
+                        </button>
+                    )}
+
                     <div className="itens-section">
                         <h3 className="itens-title">Itens da feira</h3>
                         {(feiraData.itens && feiraData.itens.length > 0) ? (
@@ -180,14 +174,6 @@ const FeiraDetalhe = () => {
                             </div>
                         )}
                     </div>
-                </div>
-            )}
-
-            {(feiraData.status === "em_andamento" || feiraData.status === "pausada") && (
-                <div className="feira-detalhe-footer">
-                    <button className="btn-finalizar-fixed" onClick={handleFinalizar} disabled={finalizing}>
-                        <IoCheckmarkCircle /> {finalizing ? "Finalizando..." : "Finalizar feira"}
-                    </button>
                 </div>
             )}
         </div>

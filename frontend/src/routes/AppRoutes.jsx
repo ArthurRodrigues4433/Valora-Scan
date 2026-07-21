@@ -8,6 +8,8 @@ import Feira from "../components/feira/Feira";
 import FeiraDetalhe from "../components/feira/FeiraDetalhe/FeiraDetalhe";
 import Economia from "../components/economia/Economia";
 import Perfil from "../components/perfil/Perfil";
+import ScanNFCe from "../components/scanner/ScanNFCe";
+import Comparacao from "../components/scanner/Comparacao";
 import PrivateRoute from "../components/auth/PrivateRoute";
 
 export default function AppRoutes() {
@@ -22,6 +24,8 @@ export default function AppRoutes() {
                 <Route path="/feira/:id" element={<FeiraDetalhe />} />
                 <Route path="/feira/:id/scan" element={<Scan />} />
                 <Route path="/feira/:id/confirmar" element={<Confirmacao />} />
+                <Route path="/feira/:id/scan-nfce" element={<ScanNFCe />} />
+                <Route path="/feira/:id/comparacao" element={<Comparacao />} />
                 <Route path="/economia" element={<Economia />} />
                 <Route path="/perfil" element={<Perfil />} />
             </Route>

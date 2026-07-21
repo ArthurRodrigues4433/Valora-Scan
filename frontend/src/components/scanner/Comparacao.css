@@ -1,0 +1,438 @@
+/* =========================
+   CONTAINER PRINCIPAL
+   ========================= */
+
+.comparacao-container {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-color);
+    padding-bottom: 100px;
+}
+
+/* =========================
+   LOADING / ERROR / EMPTY
+   ========================= */
+
+.comparacao-loading,
+.comparacao-error,
+.comparacao-empty {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.comparacao-loading p,
+.comparacao-error p,
+.comparacao-empty p {
+    color: var(--text-color);
+    font-size: 16px;
+    margin: 0;
+}
+
+.comparacao-error p {
+    color: #e74c3c;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--border-color);
+    border-top-color: var(--primary-color);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+/* =========================
+   HEADER
+   ========================= */
+
+.comparacao-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    background: var(--bg-color);
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.comparacao-header .btn-back {
+    background: transparent;
+    border: none;
+    font-size: 24px;
+    color: var(--text-color);
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+}
+
+.comparacao-header-info {
+    flex: 1;
+}
+
+.comparacao-header-info h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-color);
+}
+
+.comparacao-subtitle {
+    font-size: 13px;
+    color: #888;
+}
+
+/* =========================
+   CARDS DE RESUMO
+   ========================= */
+
+.comparacao-resumo-cards {
+    display: flex;
+    gap: 12px;
+    padding: 16px;
+}
+
+.resumo-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    border-radius: 16px;
+    gap: 4px;
+}
+
+.resumo-card.ok {
+    background: rgba(47, 141, 63, 0.1);
+    border: 1px solid rgba(47, 141, 63, 0.2);
+}
+
+.resumo-card.divergencia {
+    background: rgba(231, 76, 60, 0.1);
+    border: 1px solid rgba(231, 76, 60, 0.2);
+}
+
+.resumo-card.nao-encontrado {
+    background: rgba(230, 126, 34, 0.1);
+    border: 1px solid rgba(230, 126, 34, 0.2);
+}
+
+.resumo-card.adicional {
+    background: rgba(52, 152, 219, 0.1);
+    border: 1px solid rgba(52, 152, 219, 0.2);
+}
+
+.resumo-card.nao-encontrado .resumo-valor {
+    color: #e67e22;
+}
+
+.resumo-card.adicional .resumo-valor {
+    color: #3498db;
+}
+
+.resumo-valor {
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.resumo-card.ok .resumo-valor {
+    color: #2f8d3f;
+}
+
+.resumo-card.divergencia .resumo-valor {
+    color: #e74c3c;
+}
+
+.resumo-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #888;
+}
+
+/* =========================
+   TOTAIS
+   ========================= */
+
+.comparacao-totais {
+    display: flex;
+    gap: 12px;
+    padding: 0 16px 16px;
+}
+
+.total-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 12px;
+    border-radius: 12px;
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+}
+
+.total-item.economia {
+    border-color: rgba(47, 141, 63, 0.3);
+}
+
+.total-item.prejuizo {
+    border-color: rgba(231, 76, 60, 0.3);
+}
+
+.total-label {
+    font-size: 12px;
+    color: #888;
+    font-weight: 500;
+}
+
+.total-valor {
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.total-item.economia .total-valor {
+    color: #2f8d3f;
+}
+
+.total-item.prejuizo .total-valor {
+    color: #e74c3c;
+}
+
+/* =========================
+   SEÇÕES DE COMPARAÇÃO
+   ========================= */
+
+.comparacao-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 0 16px;
+}
+
+.comparacao-section {
+    background: var(--bg-color);
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 2px 12px var(--shadow-color);
+}
+
+.section-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin: 0 0 12px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.section-title.ok {
+    color: #2f8d3f;
+}
+
+.section-title.preco-maior {
+    color: #e74c3c;
+}
+
+.section-title.preco-menor {
+    color: #2f8d3f;
+}
+
+.section-title.nao-encontrado {
+    color: #e67e22;
+}
+
+.section-title.adicional {
+    color: #3498db;
+}
+
+/* =========================
+   LISTA DE ITENS
+   ========================= */
+
+.comparacao-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.comparacao-item {
+    padding: 14px 16px;
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.comparacao-item.ok {
+    background: rgba(47, 141, 63, 0.08);
+    border: 1px solid rgba(47, 141, 63, 0.15);
+}
+
+.comparacao-item.divergente.maior {
+    background: rgba(231, 76, 60, 0.08);
+    border: 1px solid rgba(231, 76, 60, 0.15);
+}
+
+.comparacao-item.divergente.menor {
+    background: rgba(47, 141, 63, 0.08);
+    border: 1px solid rgba(47, 141, 63, 0.15);
+}
+
+.comparacao-item.nao-encontrado {
+    background: rgba(230, 126, 34, 0.08);
+    border: 1px solid rgba(230, 126, 34, 0.15);
+}
+
+.comparacao-item.adicional {
+    background: rgba(52, 152, 219, 0.08);
+    border: 1px solid rgba(52, 152, 219, 0.15);
+}
+
+.item-nome {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.item-nome span {
+    flex: 1;
+}
+
+.item-precos {
+    display: flex;
+    gap: 12px;
+    font-size: 12px;
+}
+
+.preco-esperado {
+    color: #888;
+}
+
+.preco-encontrado {
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.item-detalhes {
+    font-size: 12px;
+    color: #888;
+    margin-top: 4px;
+}
+
+.item-diferenca {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    display: inline-block;
+}
+
+.item-diferenca.maior {
+    background: rgba(231, 76, 60, 0.15);
+    color: #e74c3c;
+}
+
+.item-diferenca.menor {
+    background: rgba(47, 141, 63, 0.15);
+    color: #2f8d3f;
+}
+
+/* =========================
+   FOOTER
+   ========================= */
+
+.comparacao-footer {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 16px;
+    background: var(--bg-color);
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: center;
+    z-index: 90;
+}
+
+.btn-confirmar-comparacao {
+    width: 100%;
+    max-width: 480px;
+    padding: 16px 24px;
+    background: #2f8d3f;
+    color: #fff;
+    border: none;
+    border-radius: 24px;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(47, 141, 63, 0.3);
+    transition: transform 0.2s, box-shadow 0.2s, background 0.2s, opacity 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.btn-confirmar-comparacao:hover:not(:disabled) {
+    background: #267832;
+    box-shadow: 0 6px 20px rgba(47, 141, 63, 0.4);
+}
+
+.btn-confirmar-comparacao:active:not(:disabled) {
+    transform: translateY(-2px) scale(0.98);
+}
+
+.btn-confirmar-comparacao:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-voltar {
+    padding: 10px 24px;
+    background: var(--primary-color);
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* =========================
+   RESPONSIVIDADE
+   ========================= */
+
+@media (max-width: 420px) {
+    .comparacao-container {
+        padding-bottom: 90px;
+    }
+}
+
+@media (min-width: 768px) {
+    .comparacao-container {
+        max-width: 680px;
+        margin: 0 auto;
+    }
+
+    .comparacao-footer {
+        padding: 16px 20px;
+    }
+}

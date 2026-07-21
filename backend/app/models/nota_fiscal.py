@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DECIMAL, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, DECIMAL, DateTime, ForeignKey, Boolean
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from app.core.database import Base
@@ -12,6 +12,7 @@ class NotaFiscal(Base):
     valor_total = Column(DECIMAL(10, 2), nullable=False)
     data_compra = Column(DateTime, nullable=False)
     qr_code = Column(String, nullable=True)
+    consentimento_lgpd = Column(Boolean, default=False, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     # Foreign key

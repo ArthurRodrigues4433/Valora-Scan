@@ -17,8 +17,9 @@ class NotaFiscalItem(Base):
     diferenca = Column(DECIMAL(10, 2), nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
-    # Foreign key
+    # Foreign keys
     nota_fiscal_id = Column(Integer, ForeignKey("notas_fiscais.id"), nullable=False)
+    feira_item_id = Column(Integer, ForeignKey("feira_itens.id"), nullable=True)
 
     # Relationship
     nota_fiscal = relationship("NotaFiscal", back_populates="nota_fiscal_itens")
