@@ -14,7 +14,7 @@ def test_acesso_rota_protegida_sem_token(client: TestClient):
 
 
 def test_acesso_rota_protegida_com_token_expirado(client: TestClient, usuario):
-    import jwt
+    from jose import jwt
     from datetime import datetime, timedelta, timezone
     from app.services.auth_service import SECRET_KEY, ALGORITHM
 

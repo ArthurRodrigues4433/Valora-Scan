@@ -15,7 +15,7 @@ def test_jwt_invalido_recusado(client: TestClient):
 
 
 def test_jwt_expirado_recusado(client: TestClient, usuario):
-    import jwt
+    from jose import jwt
     from datetime import datetime, timedelta, timezone
     from app.services.auth_service import SECRET_KEY, ALGORITHM
 

@@ -30,6 +30,9 @@ qrcode==8.2
 pyzbar==0.1.9
 
 pytest==8.4.1
+pytest-cov==7.0.0
+pytest-mock==3.14.0
+pytest-xdist==3.8.0
 
 setuptools>=70.0.0
 wheel>=0.45.0
