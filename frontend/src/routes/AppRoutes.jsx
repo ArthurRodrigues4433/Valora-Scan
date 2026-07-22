@@ -1,4 +1,5 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
+import { useEffect } from "react";
 import Login from "../components/login/Login";
 import Home from "../components/home/Home";
 import Register from "../components/register/Register";
@@ -13,7 +14,13 @@ import Comparacao from "../components/scanner/Comparacao";
 import PrivateRoute from "../components/auth/PrivateRoute";
 
 export default function AppRoutes() {
-    return (
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return (
         <Routes>
             <Route path="/" element={<Login />} />
             <Route path="/auth/login" element={<Login />} />

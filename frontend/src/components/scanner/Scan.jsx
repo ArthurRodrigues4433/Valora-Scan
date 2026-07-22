@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { FiImage } from 'react-icons/fi'
+import { FiArrowLeft } from 'react-icons/fi'
 import api from '../../services/api'
 import './Scan.css'
 
@@ -10,7 +10,6 @@ const Scan = () => {
     const [processing, setProcessing] = useState(false)
     const [webcamActive, setWebcamActive] = useState(false)
     const [cameraSupported, setCameraSupported] = useState(true)
-    const fileInputRef = useRef(null)
     const videoRef = useRef(null)
     const canvasRef = useRef(null)
     const streamRef = useRef(null)
@@ -200,20 +199,6 @@ const Scan = () => {
         }
     }
 
-    const handleGallerySelect = () => {
-        fileInputRef.current?.click()
-    }
-
-    const handleFileChange = async (e) => {
-        const file = e.target.files?.[0]
-
-        if (file) {
-            await processarImagem(file)
-        }
-
-        e.target.value = ''
-    }
-
     const handleCancel = () => {
         stopWebcam()
         navigate(`/feira/${id}`, {
@@ -225,6 +210,13 @@ const Scan = () => {
         <div className="scanner-container">
 
             <header className="scanner-header">
+                <button
+                    className="cancel-back-button"
+                    onClick={handleCancel}
+                    disabled={processing}
+                >
+                    <FiArrowLeft />
+                </button>
                 <h1>OCR de Etiquetas</h1>
             </header>
 
@@ -266,25 +258,6 @@ const Scan = () => {
             </div>
 
             <div className="scanner-actions">
-
-                <button
-                    className="gallery-button"
-                    onClick={handleGallerySelect}
-                    disabled={processing}
-                >
-                    <FiImage />
-                </button>
-
-                {webcamActive && (
-
-                    <button
-                        className="capture-button"
-                        onClick={capturePhoto}
-                        disabled={processing}
-                    />
-
-                )}
-
                 {!webcamActive && cameraSupported && (
 
                     <button
@@ -295,26 +268,16 @@ const Scan = () => {
 
                 )}
 
-                <button
-                    className="cancel-button"
-                    onClick={handleCancel}
-                    disabled={processing}
-                >
-                    Cancelar
-                </button>
+                {webcamActive && (
 
+                    <button
+                        className="capture-button"
+                        onClick={capturePhoto}
+                        disabled={processing}
+                    />
+
+                )}
             </div>
-
-            <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                capture="environment"
-                onChange={handleFileChange}
-                style={{
-                    display: 'none'
-                }}
-            />
 
             <canvas
                 ref={canvasRef}

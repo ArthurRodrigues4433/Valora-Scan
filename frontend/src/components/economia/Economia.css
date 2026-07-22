@@ -1,4 +1,7 @@
 .economia-container {
+    height: 100dvh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     padding: 24px;
 }
 
