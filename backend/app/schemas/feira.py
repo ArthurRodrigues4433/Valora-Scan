@@ -48,7 +48,7 @@ class FeiraSchema(BaseModel):
     usuario_id: int
     nome: str
     orcamento: float
-    valor_previsto: float
+    valor_previsto: Optional[float]
     status: str
     created_at: datetime
     updated_at: Optional[datetime] = None

@@ -30,6 +30,12 @@ def calcular_subtotal(quantidade: int, preco_escolhido: Decimal) -> float:
 
 def criar_item(feira_id: int, item_data: FeiraItemCreate, session: Session) -> FeiraItem:
 
+    preco_atacado = item_data.preco_atacado if item_data.preco_atacado is not None else None
+    qtd_minima = item_data.qtd_minima_atacado if item_data.qtd_minima_atacado is not None else None
+
+    subtotal = None
+    preco_escolhido = None
+
     feira = session.query(Feira).filter(Feira.id == feira_id).first()
     if not feira:
         raise HTTPException(status_code=404, detail="Feira não encontrada")
@@ -39,43 +45,39 @@ def criar_item(feira_id: int, item_data: FeiraItemCreate, session: Session) -> F
             status_code=400, detail="Feira já finalizada, não pode ser editada"
         )
 
-    preco_atacado = item_data.preco_atacado if item_data.preco_atacado is not None else Decimal("0")
-    qtd_minima = item_data.qtd_minima_atacado if item_data.qtd_minima_atacado is not None else None
-
-    # Se não houver preço de atacado ou quantidade mínima, força varejo
     if not preco_atacado or not qtd_minima:
         preco_escolhido = float(item_data.preco_varejo)
     else:
         preco_escolhido = calcular_preco_escolhido(
             item_data.quantidade,
             Decimal(str(item_data.preco_varejo)),
-            preco_atacado,
+            Decimal(str(preco_atacado)),
             qtd_minima,
         )
 
     subtotal = calcular_subtotal(item_data.quantidade, Decimal(preco_escolhido))
 
-    with session.begin():
-        novo_item = FeiraItem(
-            nome=item_data.nome,
-            categoria=item_data.categoria,
-            preco_varejo=Decimal(str(item_data.preco_varejo)),
-            preco_atacado=preco_atacado,
-            qtd_minima_atacado=qtd_minima or 1,
-            quantidade=item_data.quantidade,
-            preco_escolhido=preco_escolhido,
-            subtotal=subtotal,
-            unidade_medida=item_data.unidade_medida or "",
-            imagem_url=item_data.imagem_url,
-            ocr_texto=item_data.ocr_texto,
-            ean=item_data.ean,
-            cod_interno=item_data.cod_interno,
-            feira_id=feira_id,
-        )
-        session.add(novo_item)
-        session.flush()
+    novo_item = FeiraItem(
+        nome=item_data.nome,
+        categoria=item_data.categoria,
+        preco_varejo=Decimal(str(item_data.preco_varejo)),
+        preco_atacado=preco_atacado,
+        qtd_minima_atacado=qtd_minima or 1,
+        quantidade=item_data.quantidade,
+        preco_escolhido=preco_escolhido,
+        subtotal=subtotal,
+        unidade_medida=item_data.unidade_medida or "",
+        imagem_url=item_data.imagem_url,
+        ocr_texto=item_data.ocr_texto,
+        ean=item_data.ean,
+        cod_interno=item_data.cod_interno,
+        feira_id=feira_id,
+    )
+    session.add(novo_item)
+    session.flush()
 
-        recalcular_valor_previsto(feira_id, session)
+    recalcular_valor_previsto(feira_id, session)
+    session.commit()
 
     return novo_item
 
@@ -123,16 +125,18 @@ def atualizar_item(feira_id: int, item_id: int, item_data: FeiraItemUpdate, sess
         if item_data.preco_varejo is not None
         else item.preco_varejo
     )
-    preco_atacado_val = float(
+    preco_atacado_raw = (
         item_data.preco_atacado
         if item_data.preco_atacado is not None
-        else item.preco_atacado or 0
+        else item.preco_atacado
     )
-    qtd_minima_atacado_val = (
+    preco_atacado_val = float(preco_atacado_raw) if preco_atacado_raw is not None else None
+    qtd_minima_atacado_raw = (
         item_data.qtd_minima_atacado
         if item_data.qtd_minima_atacado is not None
-        else item.qtd_minima_atacado or 1
+        else item.qtd_minima_atacado
     )
+    qtd_minima_atacado_val = int(qtd_minima_atacado_raw) if qtd_minima_atacado_raw is not None else None
     quantidade = (
         item_data.quantidade if item_data.quantidade is not None else item.quantidade
     )
@@ -145,16 +149,16 @@ def atualizar_item(feira_id: int, item_id: int, item_data: FeiraItemUpdate, sess
         )
 
     item.preco_varejo = Decimal(str(preco_varejo))
-    item.preco_atacado = Decimal(str(preco_atacado_val))
-    item.qtd_minima_atacado = qtd_minima_atacado_val or 1
+    item.preco_atacado = preco_atacado_raw
+    item.qtd_minima_atacado = qtd_minima_atacado_raw or 1
     item.quantidade = quantidade
     item.preco_escolhido = preco_escolhido
     item.subtotal = calcular_subtotal(quantidade, Decimal(str(preco_escolhido)))
 
-    with session.begin():
-        session.add(item)
-        session.flush()
-        recalcular_valor_previsto(feira_id, session)
+    session.add(item)
+    session.flush()
+    recalcular_valor_previsto(feira_id, session)
+    session.commit()
 
     return item
 
@@ -166,6 +170,7 @@ def deletar_item(feira_id: int, item_id: int, session: Session) -> dict:
     3. Deleta o item
     4. Recalcula valor_previsto da feira
     """
+
     feira = session.query(Feira).filter(Feira.id == feira_id).first()
     if not feira:
         raise HTTPException(status_code=404, detail="Feira não encontrada")
@@ -184,10 +189,10 @@ def deletar_item(feira_id: int, item_id: int, session: Session) -> dict:
     if not item:
         raise HTTPException(status_code=404, detail="Item não encontrado")
 
-    with session.begin():
-        session.delete(item)
-        session.flush()
-        recalcular_valor_previsto(feira_id, session)
+    session.delete(item)
+    session.flush()
+    recalcular_valor_previsto(feira_id, session)
+    session.commit()
 
     return {"message": "Item deletado com sucesso"}
 

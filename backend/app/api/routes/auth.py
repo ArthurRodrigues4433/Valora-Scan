@@ -9,7 +9,7 @@ from app.services.auth_service import (
     create_access_token,
     create_refresh_token,
 )
-from app.dependencies.auth import verify_token
+from app.dependencies.auth import verify_token, verify_refresh_token
 from app.schemas.usuario import UsuarioCreate
 from app.schemas.auth import LoginSchema
 from sqlalchemy.orm import Session
@@ -85,7 +85,7 @@ async def login_form(
 
 
 @auth_router.get("/refresh")
-async def use_refresh_token(usuario: Usuario = Depends(verify_token)):
+async def use_refresh_token(usuario: Usuario = Depends(verify_refresh_token)):
     access_token = create_access_token(usuario.id)  # type: ignore
     return {
         "access_token": access_token,
