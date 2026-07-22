@@ -135,7 +135,7 @@ const FeiraDetalhe = () => {
                     )}
 
                     <div className="itens-section">
-                        <h3 className="itens-title">Itens da feira</h3>
+                        <h3 className="itens-title">Todos os Itens</h3>
                         {(feiraData.itens && feiraData.itens.length > 0) ? (
                             <div className="itens-list">
                                 {feiraData.itens.map((item) => {
@@ -198,7 +198,7 @@ const ItemCard = ({ nome, preco, precoVarejo, precoAtacado, quantidade, tipo, un
     return (
         <div className="card-item">
             <div className="item-info">
-                <div className="icone-item"></div>
+                <div className="icone-item">{(nome || "?").charAt(0)}</div>
                 <div>
                     <h4>{nome}</h4>
                     <div className="item-tipo">
