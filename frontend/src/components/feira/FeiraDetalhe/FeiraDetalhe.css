@@ -248,7 +248,34 @@
     font-size: 16px;
     font-weight: 700;
     color: var(--text-color);
-    margin: 0 0 16px 0;
+    margin: 0 0 12px 0;
+}
+
+.busca-item-wrapper {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--bg-color);
+    padding-bottom: 12px;
+    margin-bottom: 0;
+}
+
+.busca-item-input {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-color);
+    font-size: 14px;
+    color: var(--text-color);
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.busca-item-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(47, 141, 63, 0.12);
 }
 
 .itens-list {
@@ -466,5 +493,143 @@
     .feira-detalhe-container {
         max-width: 680px;
         margin: 0 auto;
+    }
+}
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    padding: 20px;
+    animation: fadeIn 0.2s ease;
+}
+
+.modal-box {
+    background: var(--bg-color);
+    border-radius: 20px;
+    padding: 24px;
+    width: 100%;
+    max-width: 400px;
+    max-height: 85dvh;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+    border: 1px solid var(--border-color);
+    animation: slideUp 0.25s ease;
+}
+
+.modal-box h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-color);
+    margin: 0 0 18px 0;
+}
+
+.modal-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 14px;
+}
+
+.modal-field label {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.modal-field input {
+    padding: 10px 14px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    background: var(--bg-color);
+    font-size: 14px;
+    color: var(--text-color);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.modal-field input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(47, 141, 63, 0.12);
+}
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.modal-actions button {
+    flex: 1;
+    padding: 10px;
+    border-radius: 24px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: transform 0.15s, box-shadow 0.2s, background 0.2s;
+}
+
+.btn-cancelar {
+    background: #f0f0f0;
+    color: var(--text-color);
+}
+
+.btn-cancelar:hover {
+    background: #e0e0e0;
+}
+
+.btn-criar {
+    background: var(--primary-color);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(47, 141, 63, 0.3);
+}
+
+.btn-criar:hover {
+    background: #267832;
+    box-shadow: 0 6px 18px rgba(47, 141, 63, 0.4);
+}
+
+.btn-deletar {
+    background: #e74c3c;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+}
+
+.btn-deletar:hover {
+    background: #c0392b;
+}
+
+.btn-criar:active,
+.btn-cancelar:active,
+.btn-deletar:active {
+    transform: translateY(-2px) scale(0.98);
+}
+
+.modal-actions button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+@media screen and (max-width: 767px) {
+    .feira-detalhe-container input,
+    .modal-field input,
+    .busca-item-input {
+        font-size: 16px !important;
     }
 }

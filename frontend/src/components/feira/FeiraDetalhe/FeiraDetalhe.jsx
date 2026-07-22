@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./FeiraDetalhe.css";
 import { IoScan, IoArrowBack } from "react-icons/io5";
 import api from "../../../services/api";
@@ -17,6 +17,64 @@ const FeiraDetalhe = () => {
     const navigate = useNavigate();
     const [feira, setFeira] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [showItemModal, setShowItemModal] = useState(false);
+    const [itemSelecionado, setItemSelecionado] = useState(null);
+    const [quantidadeModal, setQuantidadeModal] = useState(0);
+    const [savingItem, setSavingItem] = useState(false);
+    const [buscaItem, setBuscaItem] = useState("");
+    const buscaRef = useRef(null);
+    const modalBoxRef = useRef(null);
+
+    useEffect(() => {
+        if (showItemModal && modalBoxRef.current) {
+            modalBoxRef.current.scrollTop = 0;
+        }
+    }, [showItemModal]);
+
+    const openItemModal = (item) => {
+        setItemSelecionado(item);
+        setQuantidadeModal(item.quantidade || 1);
+        setShowItemModal(true);
+    };
+
+    const closeItemModal = () => {
+        setShowItemModal(false);
+        setItemSelecionado(null);
+        setQuantidadeModal(0);
+        setSavingItem(false);
+    };
+
+    const handleSaveQuantidade = async () => {
+        if (!itemSelecionado || !feira) return;
+        setSavingItem(true);
+        try {
+            await api.patch(`/feiras/feira/${feira.id}/itens/${itemSelecionado.id}`, {
+                quantidade: quantidadeModal,
+            });
+            await fetchFeira();
+            closeItemModal();
+        } catch (error) {
+            alert(error.response?.data?.detail || "Erro ao atualizar quantidade");
+        } finally {
+            setSavingItem(false);
+        }
+    };
+
+    const handleDeleteItem = async () => {
+        if (!itemSelecionado || !feira) return;
+        const confirmou = window.confirm(`Deseja realmente apagar "${itemSelecionado.nome}"?`);
+        if (!confirmou) return;
+        setSavingItem(true);
+        try {
+            await api.delete(`/feiras/feira/${feira.id}/itens/${itemSelecionado.id}`);
+            await fetchFeira();
+            closeItemModal();
+        } catch (error) {
+            alert(error.response?.data?.detail || "Erro ao apagar item");
+        } finally {
+            setSavingItem(false);
+        }
+    };
 
     const fetchFeira = async () => {
         setLoading(true);
@@ -136,9 +194,24 @@ const FeiraDetalhe = () => {
 
                     <div className="itens-section">
                         <h3 className="itens-title">Todos os Itens</h3>
+                        <div className="busca-item-wrapper">
+                            <input
+                                ref={buscaRef}
+                                type="text"
+                                className="busca-item-input"
+                                placeholder="Buscar item pelo nome..."
+                                value={buscaItem}
+                                onChange={(e) => setBuscaItem(e.target.value)}
+                                onFocus={() => buscaRef.current?.scrollIntoView({ behavior: "smooth", block: "center" })}
+                            />
+                        </div>
                         {(feiraData.itens && feiraData.itens.length > 0) ? (
                             <div className="itens-list">
-                                {feiraData.itens.map((item) => {
+                                {feiraData.itens
+                                    .filter((item) =>
+                                        (item.nome || "").toLowerCase().includes(buscaItem.trim().toLowerCase())
+                                    )
+                                    .map((item) => {
                                     const economia = item.preco_atacado && item.preco_escolhido === item.preco_atacado
                                         ? (item.preco_varejo - item.preco_atacado) * item.quantidade
                                         : 0;
@@ -154,10 +227,10 @@ const FeiraDetalhe = () => {
                                             precoAtacado={item.preco_atacado}
                                             quantidade={item.quantidade}
                                             tipo={item.tipo}
-                                            unidade={item.unidade_medida}
-                                            valorUnitario={item.preco_escolhido}
+                                            unidade_medida={item.unidade_medida}
                                             economia={economia}
                                             deixou_economia={deixou_economia}
+                                            onClick={() => openItemModal(item)}
                                         />
                                     );
                                 })}
@@ -176,11 +249,51 @@ const FeiraDetalhe = () => {
                     </div>
                 </div>
             )}
+
+            {showItemModal && (
+                <div className="modal-overlay" onClick={closeItemModal}>
+                    <div className="modal-box" ref={modalBoxRef} onClick={(e) => e.stopPropagation()}>
+                        <h3>Alterar item</h3>
+                        <div className="modal-field">
+                            <label>Item</label>
+                            <input
+                                type="text"
+                                value={itemSelecionado?.nome || ""}
+                                disabled
+                                style={{ opacity: 0.7 }}
+                                onFocus={(e) => e.target.scrollIntoView({ behavior: "smooth", block: "center" })}
+                            />
+                        </div>
+                        <div className="modal-field">
+                            <label>Quantidade</label>
+                            <input
+                                type="number"
+                                value={quantidadeModal}
+                                onChange={(e) => setQuantidadeModal(Number(e.target.value))}
+                                min="0"
+                                step="1"
+                                onFocus={(e) => e.target.scrollIntoView({ behavior: "smooth", block: "center" })}
+                            />
+                        </div>
+                        <div className="modal-actions">
+                            <button className="btn-deletar" onClick={handleDeleteItem} disabled={savingItem}>
+                                Apagar
+                            </button>
+                            <button className="btn-cancelar" onClick={closeItemModal} disabled={savingItem}>
+                                Cancelar
+                            </button>
+                            <button className="btn-criar" onClick={handleSaveQuantidade} disabled={savingItem}>
+                                {savingItem ? "Salvando..." : "Salvar"}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
 
-const ItemCard = ({ nome, preco, precoVarejo, precoAtacado, quantidade, tipo, unidade, economia, valorUnitario, deixou_economia }) => {
+const ItemCard = ({ nome, preco, precoVarejo, precoAtacado, quantidade, unidade_medida, economia, deixou_economia, onClick }) => {
 
     function saberTipoAtacadoVarejo(valorUnitario, precoAtacado, precoVarejo) {
         if (valorUnitario === precoAtacado) return "atacado";
@@ -193,10 +306,9 @@ const ItemCard = ({ nome, preco, precoVarejo, precoAtacado, quantidade, tipo, un
         varejo: { label: "Varejo", bg: "#3498db", color: "#fff" },
     };
     const tipoItem = saberTipoAtacadoVarejo(preco, precoAtacado, precoVarejo);
-    const valorTotal = preco * quantidade;
 
     return (
-        <div className="card-item">
+        <div className="card-item" onClick={onClick} style={{ cursor: "pointer" }}>
             <div className="item-info">
                 <div className="icone-item">{(nome || "?").charAt(0)}</div>
                 <div>
@@ -205,7 +317,7 @@ const ItemCard = ({ nome, preco, precoVarejo, precoAtacado, quantidade, tipo, un
                         <span style={{ backgroundColor: tipoConfig[tipoItem]?.bg, color: tipoConfig[tipoItem]?.color, marginRight: 6 }}>
                             {tipoConfig[tipoItem]?.label}
                         </span>
-                        <span className="item-quantidade">{quantidade} un</span>
+                        <span className="item-quantidade">{quantidade} {unidade_medida || ""}</span>
                     </div>
                     <div className="item-meta">
                         {economia > 0 && (
@@ -231,7 +343,7 @@ const ItemCard = ({ nome, preco, precoVarejo, precoAtacado, quantidade, tipo, un
                 </div>
             </div>
             <div className="item-preco">
-                <strong>R$ {valorTotal.toFixed(2).replace('.', ',')}</strong>
+                <strong>R$ {(preco * quantidade).toFixed(2).replace('.', ',')}</strong>
             </div>
         </div>
     );
