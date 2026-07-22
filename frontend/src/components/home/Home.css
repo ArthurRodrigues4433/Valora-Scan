@@ -8,7 +8,7 @@ html,
 body,
 #root {
     width: 100%;
-    min-height: 100vh;
+    height: 100%;
     background: #f5f6f8;
     font-family: Inter, sans-serif;
 }
@@ -19,7 +19,8 @@ body,
 
 .container-geral {
     width: 100%;
-    min-height: 100vh;
+    height: 100vh;
+    height: 100dvh;
     background: #f5f6f8;
     display: flex;
     flex-direction: column;
@@ -31,6 +32,8 @@ body,
 
 .main-content {
     flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
     padding-bottom: 80px;
     /* Apenas o espaço necessário para o BottomNav */
 }
