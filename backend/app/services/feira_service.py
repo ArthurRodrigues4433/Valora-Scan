@@ -11,16 +11,21 @@ from typing import List
 def listar_feiras_resumo(usuario_id: int, session: Session) -> list[dict]:
     feiras_db = session.query(Feira).filter(Feira.usuario_id == usuario_id).all()
 
+    feira_ids = [f.id for f in feiras_db]
+    totais_por_feira = {}
+    if feira_ids:
+        rows = (
+            session.query(FeiraItem.feira_id, func.coalesce(func.sum(FeiraItem.subtotal), Decimal("0")))
+            .filter(FeiraItem.feira_id.in_(feira_ids))
+            .group_by(FeiraItem.feira_id)
+            .all()
+        )
+        totais_por_feira = {feira_id: total for feira_id, total in rows}
+
     result = []
     for feira in feiras_db:
-        gasto_real = (
-            session.query(func.coalesce(func.sum(FeiraItem.subtotal), Decimal("0")))
-            .filter(FeiraItem.feira_id == feira.id)
-            .scalar()
-        )
-
+        gasto_real = totais_por_feira.get(feira.id, Decimal("0"))
         orcamento = Decimal(str(feira.orcamento))
-        gasto_real = Decimal(str(gasto_real)) if gasto_real else Decimal("0")
 
         economia = float(orcamento - gasto_real)
         progresso = float((gasto_real / orcamento) * 100) if orcamento > 0 else 0

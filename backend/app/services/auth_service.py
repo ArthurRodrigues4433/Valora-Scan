@@ -13,6 +13,7 @@ load_dotenv()
 SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = os.getenv("ALGORITHM")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
+REFRESH_TOKEN_EXPIRE_DAYS = int(os.getenv("REFRESH_TOKEN_EXPIRE_DAYS", "7"))
 
 bcrypt_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
@@ -34,9 +35,18 @@ def authenticate_user(email, senha, session: Session):
 
 def create_access_token(
     id_usuario: int, duration_token=timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-):
+) -> str:
     date_expires = datetime.now(timezone.utc) + duration_token
-    dict_info = {"sub": str(id_usuario), "exp": date_expires}
+    dict_info = {"sub": str(id_usuario), "type": "access", "exp": date_expires}
+    encoded_jwt = jwt.encode(dict_info, SECRET_KEY, algorithm=ALGORITHM)  # type: ignore
+    return encoded_jwt
+
+
+def create_refresh_token(
+    id_usuario: int, duration_token=timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
+) -> str:
+    date_expires = datetime.now(timezone.utc) + duration_token
+    dict_info = {"sub": str(id_usuario), "type": "refresh", "exp": date_expires}
     encoded_jwt = jwt.encode(dict_info, SECRET_KEY, algorithm=ALGORITHM)  # type: ignore
     return encoded_jwt
 

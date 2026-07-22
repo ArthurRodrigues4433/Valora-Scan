@@ -13,7 +13,6 @@ const ScanNFCe = () => {
     const [cameraSupported, setCameraSupported] = useState(true)
     const [chaveManual, setChaveManual] = useState('')
     const [error, setError] = useState('')
-    const [debug, setDebug] = useState('iniciando')
     const [scanning, setScanning] = useState(false)
     const [consentimento, setConsentimento] = useState(false)
     const fileInputRef = useRef(null)
@@ -23,11 +22,9 @@ const ScanNFCe = () => {
     const animationFrameRef = useRef(null)
 
     const validarFeira = async () => {
-        setDebug('validando feira...')
         try {
             const response = await api.get(`/feiras/feira/${id}`)
             const feira = response.data
-            setDebug(`feira encontrada: ${feira.nome} | status: ${feira.status}`)
 
             if (feira.status === "finalizada") {
                 alert("Esta feira já foi finalizada.")
@@ -41,11 +38,9 @@ const ScanNFCe = () => {
                 return false
             }
 
-            setDebug('validação ok')
             return true
         } catch (error) {
             console.error(error)
-            setDebug(`erro validação: ${error.response?.status || error.message}`)
             if (error.response?.status === 404) {
                 alert("Feira não encontrada.")
             } else if (error.response?.status === 403) {
@@ -80,7 +75,6 @@ const ScanNFCe = () => {
         })
 
         if (code) {
-            setDebug(`QR detectado: ${code.data.substring(0, 30)}...`)
             stopWebcam()
             consultarNota(code.data)
             return
@@ -118,7 +112,6 @@ const ScanNFCe = () => {
 
         if (!navigator.mediaDevices?.getUserMedia) {
             setCameraSupported(false)
-            setDebug('câmera não suportada')
             return
         }
 
@@ -133,13 +126,11 @@ const ScanNFCe = () => {
             setWebcamActive(true)
             setCameraSupported(true)
             setScanning(true)
-            setDebug('câmera ativa - escaneando...')
         } catch (error) {
             console.error(error)
             setWebcamActive(false)
             setCameraSupported(false)
             setScanning(false)
-            setDebug(`erro câmera: ${error.message}`)
         }
     }
 
@@ -162,7 +153,6 @@ const ScanNFCe = () => {
     const handleSubmitManual = async (e) => {
         e.preventDefault()
         setError('')
-        setDebug('submit manual')
 
         const chave = chaveManual.trim().replace(/\s/g, '')
 
@@ -180,7 +170,6 @@ const ScanNFCe = () => {
     }
 
     const consultarNota = async (qrData) => {
-        setDebug('consultando nota...')
         const ok = await validarFeira()
         if (!ok) return
 
@@ -201,7 +190,6 @@ const ScanNFCe = () => {
             console.error('Erro ao consultar nota:', error)
             const mensagem = error.response?.data?.detail || 'Erro ao consultar nota fiscal. Tente novamente.'
             setError(mensagem)
-            setDebug(`erro consulta: ${mensagem}`)
         } finally {
             setProcessing(false)
         }
@@ -315,18 +303,6 @@ const ScanNFCe = () => {
                 >
                     Cancelar
                 </button>
-
-                <div style={{
-                    marginTop: 24,
-                    padding: 12,
-                    background: '#1f2937',
-                    borderRadius: 8,
-                    fontSize: 11,
-                    color: '#9ca3af',
-                    fontFamily: 'monospace'
-                }}>
-                    DEBUG: {debug}
-                </div>
             </div>
 
             <canvas

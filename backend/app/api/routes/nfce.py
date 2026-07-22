@@ -1,6 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException
+﻿from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 from app.dependencies.auth import verify_token
 from app.core.database import pegar_session
 from app.models.usuario import Usuario
@@ -71,7 +72,7 @@ async def consultar_nfce(
     ).first()
 
     if nota_existente:
-        raise HTTPException(400, "Esta nota fiscal já foi importada para esta feira")
+        raise HTTPException(409, "Esta nota fiscal já foi importada para esta feira")
 
     # 4. Consulta SEFAZ-PE usando a URL completa do QR Code
     try:
@@ -110,7 +111,11 @@ async def consultar_nfce(
         )
         session.add(item_nota)
 
-    session.commit()
+    try:
+        session.commit()
+    except IntegrityError:
+        session.rollback()
+        raise HTTPException(409, "Esta nota fiscal já foi importada para esta feira")
 
     # 7. Executa comparação
     comparacao = ComparadorService.comparar_feira_nota(request.feira_id, nota.id, session)

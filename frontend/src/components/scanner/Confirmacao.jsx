@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { useNavigate, useParams, useLocation } from 'react-router-dom'
 import { IoArrowBack, IoCheckmark, IoPricetag } from 'react-icons/io5'
 import api from '../../services/api'
@@ -27,8 +27,7 @@ const Confirmacao = () => {
     const [submitting, setSubmitting] = useState(false)
 
     useEffect(() => {
-        console.log('location.state:', location.state);
-        if (!location.state?.produto) {
+                if (!location.state?.produto) {
             navigate(`/feira/${id}`)
             return
         }
@@ -75,7 +74,7 @@ const Confirmacao = () => {
     const handleSubmit = async (e) => {
     e.preventDefault()
     if (!produto.nome || !produto.preco_varejo) {
-        alert('Nome e preço varejo são obrigatórios')
+        alert('Nome e preÃ§o varejo sÃ£o obrigatÃ³rios')
         return
     }
     if (quantidade === '' || parseInt(quantidade) < 1) {
@@ -100,7 +99,7 @@ const Confirmacao = () => {
         navigate(`/feira/${id}`)
     } catch (error) {
         console.error('Erro ao adicionar item:', error)
-        alert('Erro ao adicionar produto à feira')
+        alert('Erro ao adicionar produto Ã  feira')
     } finally {
         setSubmitting(false)
     }
@@ -116,7 +115,7 @@ const Confirmacao = () => {
                     <h2 className="confirmacao-title">Confirmar Produto</h2>
                     {confianca > 0 && (
                         <span className="confianca-badge">
-                            {(confianca * 100).toFixed(0)}% confiança
+                            {(confianca * 100).toFixed(0)}% confianÃ§a
                         </span>
                     )}
                 </div>
@@ -143,7 +142,7 @@ const Confirmacao = () => {
 
                     <div className="form-row">
                         <div className="form-group">
-                            <label className="form-label">Preço Varejo</label>
+                            <label className="form-label">PreÃ§o Varejo</label>
                             <input
                                 type="number"
                                 step="0.01"
@@ -156,7 +155,7 @@ const Confirmacao = () => {
                         </div>
 
                         <div className="form-group">
-                            <label className="form-label">Preço Atacado</label>
+                            <label className="form-label">PreÃ§o Atacado</label>
                             <input
                                 type="number"
                                 step="0.01"
@@ -170,7 +169,7 @@ const Confirmacao = () => {
 
                     <div className="form-row">
                         <div className="form-group">
-                            <label className="form-label">Qtd. Mínima Atacado</label>
+                            <label className="form-label">Qtd. MÃ­nima Atacado</label>
                             <input
                                 type="number"
                                 className="form-input"
@@ -183,7 +182,7 @@ const Confirmacao = () => {
 
                     <div className="form-row">
                         <div className="form-group">
-                            <label className="form-label">Código de Barras (EAN)</label>
+                            <label className="form-label">CÃ³digo de Barras (EAN)</label>
                             <input
                                 type="text"
                                 className="form-input"
@@ -224,7 +223,7 @@ const Confirmacao = () => {
                     <div className="preco-resumo">
                         <div className="preco-row">
                             <span className="preco-label">
-                                <IoPricetag /> Preço {tipoPreco === 'atacado' ? 'Atacado' : 'Varejo'}
+                                <IoPricetag /> PreÃ§o {tipoPreco === 'atacado' ? 'Atacado' : 'Varejo'}
                             </span>
                             <span className="preco-valor">
                                 R$ {precoEscolhido.toFixed(2).replace('.', ',')}
@@ -250,7 +249,7 @@ const Confirmacao = () => {
                             className="btn-confirmar"
                             disabled={submitting}
                         >
-                            <IoCheckmark /> {submitting ? 'Adicionando...' : 'Adicionar à Feira'}
+                            <IoCheckmark /> {submitting ? 'Adicionando...' : 'Adicionar Ã  Feira'}
                         </button>
                     </div>
                 </form>

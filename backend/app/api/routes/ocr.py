@@ -9,6 +9,8 @@ ocr_router = APIRouter(
     prefix="/ocr", tags=["ocr"], dependencies=[Depends(verify_token)]
 )
 
+MAX_UPLOAD_SIZE = 5 * 1024 * 1024  # 5MB
+
 
 @ocr_router.post("/etiqueta", response_model=OCRResponse)
 async def ler_etiqueta(
@@ -17,6 +19,12 @@ async def ler_etiqueta(
     if not file.content_type.startswith("image/"):
         raise HTTPException(status_code=400, detail="Arquivo deve ser uma imagem")
 
-    conteudo = await file.read()
-    resultado = await processar_imagem_ocr(conteudo)  # Chamar função correta
+    contents = await file.read()
+    if len(contents) > MAX_UPLOAD_SIZE:
+        raise HTTPException(
+            status_code=413,
+            detail=f"Arquivo muito grande. Tamanho máximo permitido: {MAX_UPLOAD_SIZE // (1024 * 1024)}MB"
+        )
+
+    resultado = await processar_imagem_ocr(contents)
     return resultado

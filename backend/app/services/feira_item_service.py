@@ -9,9 +9,7 @@ from sqlalchemy import func
 
 def calcular_preco_escolhido(quantidade: int, preco_varejo: Decimal, preco_atacado: Decimal, qtd_minima_atacado: int) -> float:
     """
-    Calcula o preço escolhido com base na quantidade e nos preços de varejo e atacado.
-    Se a quantidade for maior ou igual à quantidade mínima para atacado, retorna o preço de atacado, caso contrário, retorna o preço de varejo.
-    Se preco_atacado for 0 ou None, usa sempre o varejo.
+    Calcula o preco escolhido com base na quantidade e nos precos de varejo e atacado.
     """
     if float(preco_atacado) > 0 and quantidade >= qtd_minima_atacado:
         return float(preco_atacado)
@@ -25,7 +23,7 @@ def calcular_preco_escolhido_from_floats(quantidade: int, preco_varejo: float, p
 
 def calcular_subtotal(quantidade: int, preco_escolhido: Decimal) -> float:
     """
-    Calcula o subtotal do item com base na quantidade e no preço escolhido.
+    Calcula o subtotal do item com base na quantidade e no preco escolhido.
     """
     return float(quantidade * preco_escolhido)
 
@@ -57,40 +55,34 @@ def criar_item(feira_id: int, item_data: FeiraItemCreate, session: Session) -> F
 
     subtotal = calcular_subtotal(item_data.quantidade, Decimal(preco_escolhido))
 
-    novo_item = FeiraItem(
-        nome=item_data.nome,
-        categoria=item_data.categoria,
-        preco_varejo=Decimal(str(item_data.preco_varejo)),
-        preco_atacado=preco_atacado,
-        qtd_minima_atacado=qtd_minima or 1,
-        quantidade=item_data.quantidade,
-        preco_escolhido=preco_escolhido,
-        subtotal=subtotal,
-        unidade_medida=item_data.unidade_medida or "",
-        imagem_url=item_data.imagem_url,
-        ocr_texto=item_data.ocr_texto,
-        ean=item_data.ean,
-        cod_interno=item_data.cod_interno,
-        feira_id=feira_id,
-    )
-    
-    session.add(novo_item)
-    session.commit()
-    session.refresh(novo_item)
+    with session.begin():
+        novo_item = FeiraItem(
+            nome=item_data.nome,
+            categoria=item_data.categoria,
+            preco_varejo=Decimal(str(item_data.preco_varejo)),
+            preco_atacado=preco_atacado,
+            qtd_minima_atacado=qtd_minima or 1,
+            quantidade=item_data.quantidade,
+            preco_escolhido=preco_escolhido,
+            subtotal=subtotal,
+            unidade_medida=item_data.unidade_medida or "",
+            imagem_url=item_data.imagem_url,
+            ocr_texto=item_data.ocr_texto,
+            ean=item_data.ean,
+            cod_interno=item_data.cod_interno,
+            feira_id=feira_id,
+        )
+        session.add(novo_item)
+        session.flush()
 
-    recalcular_valor_previsto(feira_id, session)
+        recalcular_valor_previsto(feira_id, session)
 
     return novo_item
 
 
 def atualizar_item(feira_id: int, item_id: int, item_data: FeiraItemUpdate, session: Session) -> FeiraItem:
     """
-    Atualiza um item da feira. Permite atualizar qualquer campo do item, e se os preços ou quantidade forem alterados, recalcula o preço escolhido, subtotal e valor previsto da feira.
-    1. Valida se o item existe e pertence à feira
-    2. Valida se a feira NÃO está finalizada
-    3. Atualiza os campos do item
-    4. Recalcula preco_escolhido e subtotal se necessário
-    5. Recalcula valor_previsto da feira
+    Atualiza um item da feira.
     """
 
     feira = session.query(Feira).filter(Feira.id == feira_id).first()
@@ -126,7 +118,6 @@ def atualizar_item(feira_id: int, item_id: int, item_data: FeiraItemUpdate, sess
     if item_data.cod_interno is not None:
         item.cod_interno = item_data.cod_interno
 
-    # Se algum preço mudou, recalcula preco_escolhido e subtotal
     preco_varejo = float(
         item_data.preco_varejo
         if item_data.preco_varejo is not None
@@ -160,11 +151,10 @@ def atualizar_item(feira_id: int, item_id: int, item_data: FeiraItemUpdate, sess
     item.preco_escolhido = preco_escolhido
     item.subtotal = calcular_subtotal(quantidade, Decimal(str(preco_escolhido)))
 
-    session.commit()
-    session.refresh(item)
-
-    # Recalcula valor_previsto da feira
-    recalcular_valor_previsto(feira_id, session)
+    with session.begin():
+        session.add(item)
+        session.flush()
+        recalcular_valor_previsto(feira_id, session)
 
     return item
 
@@ -176,19 +166,16 @@ def deletar_item(feira_id: int, item_id: int, session: Session) -> dict:
     3. Deleta o item
     4. Recalcula valor_previsto da feira
     """
-    # Verifica se a feira existe
     feira = session.query(Feira).filter(Feira.id == feira_id).first()
     if not feira:
         raise HTTPException(status_code=404, detail="Feira não encontrada")
 
-    # Bloqueia deleção em feiras finalizadas
     if feira.status == "finalizada":
         raise HTTPException(
             status_code=400,
             detail="Não é possível deletar itens em uma feira finalizada",
         )
 
-    # Verifica se o item existe e pertence à feira
     item = (
         session.query(FeiraItem)
         .filter(FeiraItem.id == item_id, FeiraItem.feira_id == feira_id)
@@ -197,11 +184,10 @@ def deletar_item(feira_id: int, item_id: int, session: Session) -> dict:
     if not item:
         raise HTTPException(status_code=404, detail="Item não encontrado")
 
-    session.delete(item)
-    session.commit()
-
-    # Recalcula valor_previsto da feira
-    recalcular_valor_previsto(feira_id, session)
+    with session.begin():
+        session.delete(item)
+        session.flush()
+        recalcular_valor_previsto(feira_id, session)
 
     return {"message": "Item deletado com sucesso"}
 
@@ -214,7 +200,6 @@ def recalcular_valor_previsto(feira_id: int, session: Session) -> None:
     if not feira:
         raise HTTPException(status_code=404, detail="Feira não encontrada")
 
-    # Soma todos os subtotais
     total = (
         session.query(FeiraItem)
         .filter(FeiraItem.feira_id == feira_id)
@@ -222,8 +207,4 @@ def recalcular_valor_previsto(feira_id: int, session: Session) -> None:
         .scalar()
     )
 
-    # Se não há itens, total é None; convertemos para 0
     feira.valor_previsto = total if total else 0
-
-    session.commit()
-    session.refresh(feira)

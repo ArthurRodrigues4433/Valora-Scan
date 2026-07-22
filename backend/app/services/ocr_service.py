@@ -2,7 +2,6 @@ import re
 import io
 import logging
 from typing import Optional, Tuple
-from paddleocr import PaddleOCR
 import cv2
 import numpy as np
 from pyzbar.pyzbar import decode
@@ -11,13 +10,18 @@ from app.schemas.ocr import OCRResponse, ProdutoExtraido
 
 logger = logging.getLogger(__name__)
 
-ocr = PaddleOCR(
-    lang="pt",
-    use_angle_cls=True,
-    show_log=False,
-    rec=True,
-    det=True,
-)
+
+def get_ocr():
+    from paddleocr import PaddleOCR
+    if not hasattr(get_ocr, "_instance"):
+        get_ocr._instance = PaddleOCR(
+            lang="pt",
+            use_angle_cls=True,
+            show_log=False,
+            rec=True,
+            det=True,
+        )
+    return get_ocr._instance
 
 PADROES_IGNORAR_NOME = [
     r"(?:PRECO|PREÇO|OFERTA|DESCONTO)",
@@ -114,7 +118,7 @@ def extrair_texto_ocr(conteudo: bytes) -> Tuple[str, float]:
         return "", 0.0
 
     try:
-        resultados = ocr.ocr(img, cls=True)
+        resultados = get_ocr().ocr(img, cls=True)
     except Exception as e:
         logger.warning(f"[OCR] Falha no PaddleOCR: {e}")
         return "", 0.0
@@ -420,7 +424,7 @@ def extrair_dados_produto(texto: str, codigos_barras: dict) -> ProdutoExtraido:
     )
 
 
-async def processar_imagem_ocr(conteudo: bytes) -> OCRResponse:
+def _processar_imagem_ocr_sync(conteudo: bytes) -> OCRResponse:
     codigos_barras = extrair_codigos_barras(conteudo)
     logger.debug(f"[OCR] Códigos de barras detectados: {codigos_barras}")
 
@@ -438,3 +442,8 @@ async def processar_imagem_ocr(conteudo: bytes) -> OCRResponse:
     logger.debug(f"[OCR DEBUG] Produto extraído: {produto}")
 
     return OCRResponse(texto_extrato=texto, produto=produto, confianca=confianca)
+
+
+async def processar_imagem_ocr(conteudo: bytes) -> OCRResponse:
+    import anyio
+    return await anyio.to_thread.run_sync(_processar_imagem_ocr_sync, conteudo)

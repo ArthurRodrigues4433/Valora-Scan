@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from typing import Optional, List
 from datetime import datetime
 
@@ -34,7 +34,7 @@ class FeiraDetalheSchema(BaseModel):
 
 class FeiraCreate(BaseModel):
     nome: str
-    orcamento: float
+    orcamento: float = Field(gt=0, description="Orçamento deve ser maior que zero")
 
 
 class FeiraUpdate(BaseModel):
