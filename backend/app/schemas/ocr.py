@@ -8,6 +8,8 @@ class ProdutoExtraido(BaseModel):
     preco_atacado: Optional[float] = None
     qtd_minima_atacado: Optional[int] = None
     unidade_medida: Optional[str] = None
+    ean: Optional[str] = None
+    cod_interno: Optional[str] = None
 
 
 class OCRResponse(BaseModel):

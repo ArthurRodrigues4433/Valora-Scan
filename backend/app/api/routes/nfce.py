@@ -103,7 +103,10 @@ async def consultar_nfce(
             preco_total=item_data['preco_total'],
             divergencia=False,
             valor_esperado=None,
-            diferenca=None
+            diferenca=None,
+            ean=item_data.get('ean'),
+            cprod=item_data.get('cprod'),
+            ncm=item_data.get('ncm')
         )
         session.add(item_nota)
 

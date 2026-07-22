@@ -13,6 +13,8 @@ class FeiraItemBase(BaseModel):
     unidade_medida: Optional[str] = None
     imagem_url: Optional[str] = None
     ocr_texto: Optional[str] = None
+    ean: Optional[str] = None
+    cod_interno: Optional[str] = None
 
 class FeiraItemCreate(FeiraItemBase):
     pass
@@ -26,6 +28,9 @@ class FeiraItemUpdate(BaseModel):
     quantidade: Optional[int] = None
     unidade_medida: Optional[str] = None
     imagem_url: Optional[str] = None
+    ocr_texto: Optional[str] = None
+    ean: Optional[str] = None
+    cod_interno: Optional[str] = None
 
 class FeiraItemSchema(FeiraItemBase):
     id: int

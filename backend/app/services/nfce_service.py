@@ -154,19 +154,58 @@ class NFCeService:
                     else:
                         item['quantidade'] = 1
 
-                    # PreÃ§o unitÃ¡rio
+                    # Preço unitário
                     if ns:
                         vuncom = det.find('nfe:prod/nfe:vUnCom', ns)
                     else:
                         vuncom = det.find('prod/vUnCom')
                     item['preco_unitario'] = float(vuncom.text) if vuncom is not None and vuncom.text else 0.0
 
-                    # PreÃ§o total
+                    # Preço total
                     if ns:
                         vprod = det.find('nfe:prod/nfe:vProd', ns)
                     else:
                         vprod = det.find('prod/vProd')
                     item['preco_total'] = float(vprod.text) if vprod is not None and vprod.text else 0.0
+
+                    # Código interno do produto (cProd)
+                    if ns:
+                        cprod = det.find('nfe:prod/nfe:cProd', ns)
+                    else:
+                        cprod = det.find('prod/cProd')
+                    item['cprod'] = cprod.text.strip() if cprod is not None and cprod.text else None
+
+                    # EAN/GTIN (cEAN)
+                    if ns:
+                        c_ean = det.find('nfe:prod/nfe:cEAN', ns)
+                    else:
+                        c_ean = det.find('prod/cEAN')
+                    ean = c_ean.text.strip() if c_ean is not None and c_ean.text else None
+                    if not ean or ean.upper() in ('SEM GTIN', '00000000000000'):
+                        ean = None
+                    item['ean'] = ean
+
+                    # EAN tributável (cEANTrib)
+                    if ns:
+                        c_ean_trib = det.find('nfe:prod/nfe:cEANTrib', ns)
+                    else:
+                        c_ean_trib = det.find('prod/cEANTrib')
+                    ean_trib = c_ean_trib.text.strip() if c_ean_trib is not None and c_ean_trib.text else None
+                    if not ean_trib or ean_trib.upper() in ('SEM GTIN', '00000000000000'):
+                        ean_trib = None
+                    if not item['ean'] and ean_trib:
+                        item['ean'] = ean_trib
+
+                    # NCM
+                    if ns:
+                        ncm = det.find('nfe:prod/nfe:NCM', ns)
+                    else:
+                        ncm = det.find('prod/NCM')
+                    ncm_val = ncm.text.strip() if ncm is not None and ncm.text else None
+                    if ncm_val and ncm_val.lower() != 'none':
+                        item['ncm'] = ncm_val
+                    else:
+                        item['ncm'] = None
 
                     itens.append(item)
                 break

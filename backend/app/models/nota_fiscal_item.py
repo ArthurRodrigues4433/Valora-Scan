@@ -15,11 +15,12 @@ class NotaFiscalItem(Base):
     divergencia = Column(Boolean, default=False, nullable=False)
     valor_esperado = Column(DECIMAL(10, 2), nullable=True)
     diferenca = Column(DECIMAL(10, 2), nullable=True)
+    ean = Column(String, nullable=True, index=True)
+    cprod = Column(String, nullable=True, index=True)
+    ncm = Column(String, nullable=True, index=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
-    # Foreign keys
     nota_fiscal_id = Column(Integer, ForeignKey("notas_fiscais.id"), nullable=False)
     feira_item_id = Column(Integer, ForeignKey("feira_itens.id"), nullable=True)
 
-    # Relationship
     nota_fiscal = relationship("NotaFiscal", back_populates="nota_fiscal_itens")

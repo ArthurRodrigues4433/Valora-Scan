@@ -69,6 +69,8 @@ def criar_item(feira_id: int, item_data: FeiraItemCreate, session: Session) -> F
         unidade_medida=item_data.unidade_medida or "",
         imagem_url=item_data.imagem_url,
         ocr_texto=item_data.ocr_texto,
+        ean=item_data.ean,
+        cod_interno=item_data.cod_interno,
         feira_id=feira_id,
     )
     
@@ -117,6 +119,12 @@ def atualizar_item(feira_id: int, item_id: int, item_data: FeiraItemUpdate, sess
         item.unidade_medida = item_data.unidade_medida
     if item_data.imagem_url is not None:
         item.imagem_url = item_data.imagem_url
+    if item_data.ocr_texto is not None:
+        item.ocr_texto = item_data.ocr_texto
+    if item_data.ean is not None:
+        item.ean = item_data.ean
+    if item_data.cod_interno is not None:
+        item.cod_interno = item_data.cod_interno
 
     # Se algum preço mudou, recalcula preco_escolhido e subtotal
     preco_varejo = float(

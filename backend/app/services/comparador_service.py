@@ -18,15 +18,11 @@ class ComparadorService:
         if not texto:
             return ""
 
-        # Remove acentos
         texto = unicodedata.normalize('NFD', texto)
         texto = texto.encode('ascii', 'ignore').decode('utf-8')
-
-        # Lowercase e remove caracteres especiais
         texto = texto.lower()
         texto = re.sub(r'[^\w\s]', '', texto)
 
-        # Remove unidades comuns
         unidades = ['kg', 'g', 'l', 'ml', 'un', 'und', 'pc', 'pct', 'cx', 'fd', 'lt']
         palavras = texto.split()
         palavras = [p for p in palavras if p not in unidades]
@@ -43,15 +39,18 @@ class ComparadorService:
     @staticmethod
     def comparar_feira_nota(feira_id: int, nota_fiscal_id: int, session: Session) -> dict:
         """
-        Compara itens da feira (lista do usuário) com itens da nota fiscal
+        Compara itens da feira (lista do usuário) com itens da nota fiscal.
+        Estratégia:
+        1. Match exato por EAN (código de barras)
+        2. Match exato por cProd (código interno da etiqueta/SEFAZ)
+        3. Match exato por nome normalizado
+        4. Match fuzzy por nome normalizado (fallback)
         """
 
-        # Busca itens da feira
         itens_feira = session.query(FeiraItem).filter(
             FeiraItem.feira_id == feira_id
         ).all()
 
-        # Busca itens da nota
         itens_nota = session.query(NotaFiscalItem).filter(
             NotaFiscalItem.nota_fiscal_id == nota_fiscal_id
         ).all()
@@ -69,25 +68,48 @@ class ComparadorService:
             }
         }
 
-        # Cria mapa normalizado dos itens da feira
-        mapa_feira = {}
+        mapa_por_ean = {}
+        mapa_por_cod_interno = {}
+        mapa_por_nome = {}
+
         for item in itens_feira:
             nome_norm = ComparadorService.normalizar(item.nome)
-            mapa_feira[nome_norm] = item
+            mapa_por_nome[nome_norm] = item
 
-        # Processa cada item da nota
+            if item.ean:
+                mapa_por_ean[item.ean] = item
+
+            if item.cod_interno:
+                mapa_por_cod_interno[item.cod_interno] = item
+
         itens_nota_processados = set()
 
         for item_nota in itens_nota:
-            nome_nota_norm = ComparadorService.normalizar(item_nota.produto_nome)
+            item_feira_match = None
+            match_tipo = None
 
-            # Tenta match exato primeiro
-            match_exato = mapa_feira.get(nome_nota_norm)
+            # 1) Match por EAN (código de barras)
+            if item_nota.ean and item_nota.ean in mapa_por_ean:
+                item_feira_match = mapa_por_ean[item_nota.ean]
+                match_tipo = "ean"
 
-            # Tenta fuzzy se não encontrou exato
-            match_fuzzy = None
-            if not match_exato:
-                nomes_feira = list(mapa_feira.keys())
+            # 2) Match por cProd (código interno da etiqueta/SEFAZ)
+            if not item_feira_match and item_nota.cprod and item_nota.cprod in mapa_por_cod_interno:
+                item_feira_match = mapa_por_cod_interno[item_nota.cprod]
+                match_tipo = "codigo"
+
+            # 3) Match exato por nome normalizado
+            if not item_feira_match:
+                nome_nota_norm = ComparadorService.normalizar(item_nota.produto_nome)
+                match_exato = mapa_por_nome.get(nome_nota_norm)
+                if match_exato:
+                    item_feira_match = match_exato
+                    match_tipo = "nome_exato"
+
+            # 4) Match fuzzy por nome normalizado
+            if not item_feira_match:
+                nome_nota_norm = ComparadorService.normalizar(item_nota.produto_nome)
+                nomes_feira = list(mapa_por_nome.keys())
                 if nomes_feira:
                     melhor_nome = None
                     melhor_score = 0.0
@@ -98,17 +120,15 @@ class ComparadorService:
                             melhor_nome = nome_f
 
                     if melhor_score >= 0.85 and melhor_nome is not None:
-                        match_fuzzy = mapa_feira.get(melhor_nome)
-
-            item_feira_match = match_exato or match_fuzzy
+                        item_feira_match = mapa_por_nome.get(melhor_nome)
+                        match_tipo = "nome_fuzzy"
 
             if item_feira_match:
-                # Item encontrado na lista
                 valor_esperado = float(item_feira_match.preco_escolhido)
                 valor_encontrado = float(item_nota.preco_unitario)
                 diferenca = valor_encontrado - valor_esperado
 
-                divergente = abs(diferenca) > 0.01  # Tolerância de 1 centavo
+                divergente = abs(diferenca) > 0.01
 
                 if divergente:
                     item_nota.divergencia = True
@@ -146,23 +166,24 @@ class ComparadorService:
                     "preco_encontrado": valor_encontrado,
                     "diferenca": diferenca,
                     "divergente": divergente,
-                    "match_tipo": "exato" if match_exato else "fuzzy"
+                    "match_tipo": match_tipo
                 })
 
+                item_nota.feira_item_id = item_feira_match.id
                 itens_nota_processados.add(item_nota.id)
 
             else:
-                # Item na nota mas NÃO na lista
                 item_nota.divergencia = True
                 resultado["resumo"]["adicionais"].append({
                     "nome": item_nota.produto_nome,
                     "quantidade": item_nota.quantidade,
                     "preco": float(item_nota.preco_unitario),
+                    "ean": item_nota.ean,
+                    "cprod": item_nota.cprod,
                     "item_nota_id": item_nota.id
                 })
                 resultado["total_encontrado"] += float(item_nota.preco_total)
 
-        # Verifica itens da feira que NÃO estão na nota
         itens_feira_ids = {i.id for i in itens_feira}
         itens_nota_feira_ids = {i.feira_item_id for i in itens_nota if i.feira_item_id}
 
@@ -184,7 +205,6 @@ class ComparadorService:
             len(resultado["resumo"]["adicionais"])
         )
 
-        # Calcula economia/prejuízo
         economia = sum(abs(i["diferenca"]) for i in resultado["resumo"]["precos_menores"])
         prejuizo = sum(i["diferenca"] for i in resultado["resumo"]["precos_maiores"])
         resultado["economia"] = economia

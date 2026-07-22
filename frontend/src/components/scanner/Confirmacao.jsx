@@ -15,7 +15,9 @@ const Confirmacao = () => {
         preco_atacado: '',
         qtd_minima_atacado: '',
         unidade_medida: '',
-        imagem_url: ''
+        imagem_url: '',
+        ean: '',
+        cod_interno: ''
     })
 
     const [quantidade, setQuantidade] = useState('')
@@ -38,7 +40,9 @@ const Confirmacao = () => {
             preco_atacado: dados.preco_atacado !== null && dados.preco_atacado !== undefined ? String(dados.preco_atacado) : '',
             qtd_minima_atacado: dados.qtd_minima_atacado !== null && dados.qtd_minima_atacado !== undefined ? String(dados.qtd_minima_atacado) : '',
             unidade_medida: dados.unidade_medida || '',
-            imagem_url: location.state.imagemUrl || ''
+            imagem_url: location.state.imagemUrl || '',
+            ean: dados.ean || '',
+            cod_interno: dados.cod_interno || ''
         })
         setOcrTexto(location.state.ocrTexto || '')
         setConfianca(location.state.confianca || 0)
@@ -89,7 +93,9 @@ const Confirmacao = () => {
             quantidade: quantidadeNum,
             unidade_medida: produto.unidade_medida || null,
             imagem_url: produto.imagem_url || null,
-            ocr_texto: ocrTexto
+            ocr_texto: ocrTexto,
+            ean: produto.ean || null,
+            cod_interno: produto.cod_interno || null
         })
         navigate(`/feira/${id}`)
     } catch (error) {
@@ -171,6 +177,30 @@ const Confirmacao = () => {
                                 value={produto.qtd_minima_atacado}
                                 onChange={e => handleProdutoChange('qtd_minima_atacado', e.target.value)}
                                 placeholder="Ex: 3"
+                            />
+                        </div>
+                    </div>
+
+                    <div className="form-row">
+                        <div className="form-group">
+                            <label className="form-label">Código de Barras (EAN)</label>
+                            <input
+                                type="text"
+                                className="form-input"
+                                value={produto.ean}
+                                onChange={e => handleProdutoChange('ean', e.target.value)}
+                                placeholder="Ex: 7891058008628"
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label className="form-label">COD / PLU</label>
+                            <input
+                                type="text"
+                                className="form-input"
+                                value={produto.cod_interno}
+                                onChange={e => handleProdutoChange('cod_interno', e.target.value)}
+                                placeholder="Ex: 41722"
                             />
                         </div>
                     </div>

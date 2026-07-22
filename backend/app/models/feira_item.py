@@ -19,6 +19,8 @@ class FeiraItem(Base):
     unidade_medida = Column(String, nullable=True)
     imagem_url = Column(String, nullable=True)
     ocr_texto = Column(String, nullable=True)
+    ean = Column(String, nullable=True, index=True)
+    cod_interno = Column(String, nullable=True, index=True)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     # Foreign key
