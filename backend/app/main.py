@@ -5,7 +5,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],  # URL do Vite
+    allow_origins=["http://localhost:5173", "http://192.168.1.208:5173"],  # URL do Vite
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -31,5 +31,5 @@ app.include_router(notas_router)
 app.include_router(nfce_router)
 app.include_router(perfil_router)
 
-# uvicorn app.main:app --reload
-# uvicorn app.main:app --reload --reload-dir app
+# uvicorn app.main:app --reload --host 0.0.0.0
+# uvicorn app.main:app --reload --reload-dir app --host 0.0.0.0
