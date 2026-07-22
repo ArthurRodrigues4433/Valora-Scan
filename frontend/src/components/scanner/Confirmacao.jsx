@@ -109,7 +109,7 @@ const Confirmacao = () => {
         <div className="confirmacao-container">
             <div className="confirmacao-content">
                 <div className="confirmacao-header">
-                    <button className="btn-back" onClick={handleBack}>
+                    <button                     className="btn-back" onClick={handleBack} aria-label="Voltar">
                         <IoArrowBack />
                     </button>
                     <h2 className="confirmacao-title">Confirmar Produto</h2>

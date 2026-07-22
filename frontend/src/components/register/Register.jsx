@@ -20,9 +20,20 @@ const Register = () => {
         setLoading(true)
         setError('')
 
-        // ← validação antes de enviar
         if (senha !== confirmarSenha) {
             setError('As senhas não coincidem')
+            setLoading(false)
+            return
+        }
+
+        if (senha.length < 6) {
+            setError('A senha deve ter pelo menos 6 caracteres')
+            setLoading(false)
+            return
+        }
+
+        if (!/[A-Za-z]/.test(senha) || !/\d/.test(senha)) {
+            setError('A senha deve conter letras e números')
             setLoading(false)
             return
         }

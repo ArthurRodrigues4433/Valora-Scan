@@ -147,7 +147,7 @@ const FeiraDetalhe = () => {
             ) : (
                 <div className="feira-detalhe-content">
                     <div className="feira-detalhe-header">
-                        <button className="btn-back" onClick={handleBack}>
+                        <button className="btn-back" onClick={handleBack} aria-label="Voltar">
                             <IoArrowBack />
                         </button>
                         <h2 className="feira-detalhe-title">{feiraData.nome}</h2>

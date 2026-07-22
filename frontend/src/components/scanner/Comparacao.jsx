@@ -78,7 +78,7 @@ const Comparacao = () => {
       <div className="comparacao-container">
         <div className="comparacao-empty">
           <p>Nenhuma comparação disponível</p>
-          <button className="btn-voltar" onClick={handleBack}>
+          <button className="btn-voltar" onClick={handleBack} aria-label="Voltar">
             Voltar
           </button>
         </div>
@@ -99,7 +99,7 @@ const Comparacao = () => {
   return (
     <div className="comparacao-container">
       <div className="comparacao-header">
-        <button className="btn-back" onClick={handleBack}>
+        <button className="btn-back" onClick={handleBack} aria-label="Voltar">
           <IoArrowBack />
         </button>
         <div className="comparacao-header-info">

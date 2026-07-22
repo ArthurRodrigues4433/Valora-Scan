@@ -27,9 +27,9 @@ const FeiraCardItem = ({ feira, onClick, onDelete }) => {
                         className="btn-deletar-feira"
                         onClick={(event) => onDelete(event, feira.id, feira.nome)}
                         title="Deletar feira"
-                    >
-                        <IoTrashOutline />
-                    </button>
+                        >
+                            <IoTrashOutline aria-label="Deletar feira" />
+                        </button>
                     <span
                         className="feira-status"
                         style={{ color: status.color, backgroundColor: status.bg }}

@@ -1,8 +1,10 @@
-import { useState, useEffect, useMemo } from "react";
+﻿import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import "./FeiraList.css";
 import FeiraCard from "../FeiraCard/FeiraCard";
 import api from "../../../services/api";
+import Loading from "../../common/Loading";
+import ErrorMessage from "../../common/ErrorMessage";
 
 const FeiraList = () => {
     const [feiras, setFeiras] = useState([]);
@@ -16,7 +18,6 @@ const FeiraList = () => {
                 const { data } = await api.get("/feiras/feira/resumo");
                 setFeiras(Array.isArray(data) ? data : []);
             } catch (e) {
-                console.error("Erro ao buscar feiras:", e);
                 setErro(e);
                 setFeiras([]);
             } finally {
@@ -54,7 +55,6 @@ const FeiraList = () => {
         api.get("/feiras/feira/resumo")
             .then(res => setFeiras(Array.isArray(res.data) ? res.data : []))
             .catch(e => {
-                console.error("Erro ao buscar feiras:", e);
                 setErro(e);
             })
             .finally(() => setLoading(false));
@@ -63,10 +63,8 @@ const FeiraList = () => {
     if (loading) {
         return (
             <section className="container-feiras">
-                <SectionTitle title="Feiras recentes" />
-                <div className="loading-state">
-                    <div className="spinner"></div>
-                </div>
+                <SectionTitle title="Compras recentes" />
+                <Loading text="Carregando..." />
             </section>
         );
     }
@@ -74,11 +72,8 @@ const FeiraList = () => {
     if (erro) {
         return (
             <section className="container-feiras">
-                <SectionTitle title="Feiras recentes" />
-                <div className="error-state">
-                    <p>Não foi possível carregar as feiras</p>
-                    <button className="btn-primary" onClick={tentarNovamente}>Tentar novamente</button>
-                </div>
+                <SectionTitle title="Compras recentes" />
+                <ErrorMessage message="Não foi possível carregar as feiras" onRetry={tentarNovamente} />
             </section>
         );
     }
@@ -131,7 +126,7 @@ const SectionTitle = ({ title }) => {
     return (
         <div className="section-title">
             <h3>{title}</h3>
-            <button onClick={() => navigate("/feiras")}>Ver tudo</button>
+            <button onClick={() => navigate("/feiras")} aria-label="Ver tudo">Ver tudo</button>
         </div>
     );
 };

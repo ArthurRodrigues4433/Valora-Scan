@@ -203,7 +203,7 @@ const ScanNFCe = () => {
     return (
         <div className="scan-nfce-container">
             <header className="scan-nfce-header">
-                <button className="btn-back" onClick={handleBack}>
+                <button className="btn-back" onClick={handleBack} aria-label="Voltar">
                     <IoArrowBack />
                 </button>
                 <h1>Escanear NFCe</h1>

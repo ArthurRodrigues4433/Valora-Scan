@@ -1,7 +1,9 @@
-import { useState, useEffect, useMemo } from "react";
+﻿import { useState, useEffect, useMemo } from "react";
 import "./ScanList.css";
 import ScanCard from "../ScanCard/ScanCard";
 import api from "../../../services/api";
+import Loading from "../../common/Loading";
+import ErrorMessage from "../../common/ErrorMessage";
 
 const ScanList = () => {
     const [scans, setScans] = useState([]);
@@ -15,7 +17,6 @@ const ScanList = () => {
                 const { data } = await api.get("/notas/scans");
                 setScans(Array.isArray(data) ? data : []);
             } catch (error) {
-                console.error("Erro ao buscar scans:", error);
                 setErro(error);
                 setScans([]);
             } finally {
@@ -42,7 +43,6 @@ const ScanList = () => {
         api.get("/notas/scans")
             .then(res => setScans(Array.isArray(res.data) ? res.data : []))
             .catch(error => {
-                console.error("Erro ao buscar scans:", error);
                 setErro(error);
             })
             .finally(() => setLoading(false));
@@ -52,9 +52,7 @@ const ScanList = () => {
         return (
             <section className="container-scans">
                 <SectionTitle title="Últimos scans" />
-                <div className="loading-state">
-                    <div className="spinner"></div>
-                </div>
+                <Loading text="Carregando..." />
             </section>
         );
     }
@@ -63,10 +61,7 @@ const ScanList = () => {
         return (
             <section className="container-scans">
                 <SectionTitle title="Últimos scans" />
-                <div className="error-state">
-                    <p>Não foi possível carregar os scans</p>
-                    <button className="btn-primary" onClick={tentarNovamente}>Tentar novamente</button>
-                </div>
+                <ErrorMessage message="Não foi possível carregar os scans" onRetry={tentarNovamente} />
             </section>
         );
     }

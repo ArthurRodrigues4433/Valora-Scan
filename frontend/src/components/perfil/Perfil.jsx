@@ -78,7 +78,7 @@ const Perfil = () => {
     return (
         <div className="perfil-container">
             <div className="perfil-header">
-                <button className="perfil-back-btn" onClick={() => navigate('/home')}>
+                <button className="perfil-back-btn" onClick={() => navigate('/home')} aria-label="Voltar">
                     <IoArrowBack />
                 </button>
 
@@ -89,7 +89,7 @@ const Perfil = () => {
                 {!editandoNome ? (
                     <div className="perfil-nome-container">
                         <h1 className="perfil-nome">{usuario.nome}</h1>
-                        <button className="perfil-edit-btn" onClick={() => setEditandoNome(true)}>
+                        <button className="perfil-edit-btn" onClick={() => setEditandoNome(true)} aria-label="Editar nome">
                             <IoPencil />
                         </button>
                     </div>
