@@ -14,26 +14,28 @@ const ScanNFCe = () => {
     const [chaveManual, setChaveManual] = useState('')
     const [error, setError] = useState('')
     const [scanning, setScanning] = useState(false)
-    const [consentimento, setConsentimento] = useState(false)
-    const fileInputRef = useRef(null)
     const videoRef = useRef(null)
     const canvasRef = useRef(null)
     const streamRef = useRef(null)
     const animationFrameRef = useRef(null)
+
+    const [routerError, setRouterError] = useState(null)
+    const [dadosNota, setDadosNota] = useState(null)
+    const [comparacao, setComparacao] = useState(null)
 
     const validarFeira = async () => {
         try {
             const response = await api.get(`/feiras/feira/${id}`)
             const feira = response.data
 
-            if (feira.status === "finalizada") {
-                alert("Esta feira já foi finalizada.")
-                navigate("/feiras", { replace: true })
+            if (feira.status === 'finalizada') {
+                alert('Esta feira já foi finalizada.')
+                navigate('/feiras', { replace: true })
                 return false
             }
 
             if (!feira.itens || feira.itens.length === 0) {
-                alert("Adicione pelo menos um produto à feira antes de escanear a nota fiscal.")
+                alert('Adicione pelo menos um produto à feira antes de escanear a nota fiscal.')
                 navigate(`/feira/${id}`, { replace: true })
                 return false
             }
@@ -42,13 +44,13 @@ const ScanNFCe = () => {
         } catch (error) {
             console.error(error)
             if (error.response?.status === 404) {
-                alert("Feira não encontrada.")
+                alert('Feira não encontrada.')
             } else if (error.response?.status === 403) {
-                alert("Você não possui acesso a esta feira.")
+                alert('Você não possui acesso a esta feira.')
             } else {
-                alert("Erro ao carregar a feira.")
+                alert('Erro ao carregar a feira.')
             }
-            navigate("/feiras", { replace: true })
+            navigate('/feiras', { replace: true })
             return false
         }
     }
@@ -71,11 +73,11 @@ const ScanNFCe = () => {
 
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height)
         const code = jsQR(imageData.data, imageData.width, imageData.height, {
-            inversionAttempts: "dontInvert",
+            inversionAttempts: 'dontInvert',
         })
 
         if (code) {
-            stopWebcam()
+            setScanning(false)
             consultarNota(code.data)
             return
         }
@@ -85,9 +87,14 @@ const ScanNFCe = () => {
 
     useEffect(() => {
         const iniciar = async () => {
-            const ok = await validarFeira()
-            if (ok) {
-                startWebcam()
+            try {
+                const ok = await validarFeira()
+                if (ok) {
+                    startWebcam()
+                }
+            } catch (error) {
+                console.error('Erro na inicialização ScanNFCe:', error)
+                setRouterError(error)
             }
         }
         iniciar()
@@ -175,6 +182,8 @@ const ScanNFCe = () => {
 
         setProcessing(true)
         setError('')
+        setDadosNota(null)
+        setComparacao(null)
 
         try {
             const response = await api.post('/nfce/consultar', {
@@ -183,6 +192,8 @@ const ScanNFCe = () => {
                 consentimento_lgpd: true
             })
 
+            setDadosNota(response.data)
+            setComparacao(response.data?.comparacao || null)
             navigate(`/feira/${id}/comparacao`, {
                 state: { comparacao: response.data }
             })
@@ -198,6 +209,95 @@ const ScanNFCe = () => {
     const handleBack = () => {
         stopWebcam()
         navigate(`/feira/${id}`, { replace: true })
+    }
+
+    if (routerError) {
+        return (
+            <div className="scan-nfce-container">
+                <header className="scan-nfce-header">
+                    <button className="btn-back" onClick={() => navigate('/feiras', { replace: true })} aria-label="Voltar">
+                        <IoArrowBack />
+                    </button>
+                    <h1>Escanear NFCe</h1>
+                </header>
+                <div className="scan-nfce-content">
+                    <div className="scan-nfce-error">
+                        Erro ao carregar o scanner. Tenta novamente mais tarde.
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+    if (dadosNota) {
+        const comp = comparacao || {}
+        const resumo = comp.resumo || {}
+        const naoEncontrados = resumo.nao_encontrados || []
+        const adicionais = resumo.adicionais || []
+        const itensComparacao = comp.itens || []
+        const totalDivergencias = itensComparacao.filter((item) => item.divergente).length
+
+        return (
+            <div className="scan-nfce-container">
+                <header className="scan-nfce-header">
+                    <button className="btn-back" onClick={handleBack} aria-label="Voltar">
+                        <IoArrowBack />
+                    </button>
+                    <h1>Resultado da Compra</h1>
+                </header>
+
+                <div className="scan-nfce-content">
+                    <div className="scan-nfce-instruction">
+                        <p>
+                            {comp.mercado || dadosNota.mercado || 'Mercado'} •{' '}
+                            {(comp.data_compra || dadosNota.data_compra || '').slice(0, 10)}
+                        </p>
+                    </div>
+
+                    <div className="scan-nfce-cards">
+                        <div className="scan-nfce-card ok">
+                            <span className="scan-nfce-card-valor">{itensComparacao.length - totalDivergencias}</span>
+                            <span className="scan-nfce-card-label">Conferidos</span>
+                        </div>
+                        <div className="scan-nfce-card divergencia">
+                            <span className="scan-nfce-card-valor">{totalDivergencias}</span>
+                            <span className="scan-nfce-card-label">Divergências</span>
+                        </div>
+                        <div className="scan-nfce-card nao-encontrado">
+                            <span className="scan-nfce-card-valor">{naoEncontrados.length}</span>
+                            <span className="scan-nfce-card-label">Na Lista, Não na Nota</span>
+                        </div>
+                        <div className="scan-nfce-card adicional">
+                            <span className="scan-nfce-card-valor">{adicionais.length}</span>
+                            <span className="scan-nfce-card-label">Na Nota, Não na Lista</span>
+                        </div>
+                    </div>
+
+                    <div className="scan-nfce-totais">
+                        <div className="scan-nfce-total-item economia">
+                            <span className="scan-nfce-total-label">Economia</span>
+                            <span className="scan-nfce-total-valor">
+                                R$ {(comp.economia || 0).toFixed(2).replace('.', ',')}
+                            </span>
+                        </div>
+                        <div className="scan-nfce-total-item prejuizo">
+                            <span className="scan-nfce-total-label">Prejuízo</span>
+                            <span className="scan-nfce-total-valor">
+                                R$ {(comp.prejuizo || 0).toFixed(2).replace('.', ',')}
+                            </span>
+                        </div>
+                    </div>
+
+                    <button
+                        className="scan-nfce-submit scan-nfce-submit-full"
+                        onClick={handleBack}
+                        disabled={processing}
+                    >
+                        Voltar para feira
+                    </button>
+                </div>
+            </div>
+        )
     }
 
     return (
@@ -234,11 +334,7 @@ const ScanNFCe = () => {
                             />
                         ) : (
                             <div className="scan-nfce-camera-placeholder">
-                                {cameraSupported ? (
-                                    <p>Câmera indisponível</p>
-                                ) : (
-                                    <p>Câmera não suportada</p>
-                                )}
+                                <p>Câmera indisponível</p>
                             </div>
                         )}
                     </div>
@@ -274,23 +370,10 @@ const ScanNFCe = () => {
                         </div>
                     )}
 
-                    <label className="scan-nfce-consent">
-                        <input
-                            type="checkbox"
-                            checked={consentimento}
-                            onChange={(e) => setConsentimento(e.target.checked)}
-                            disabled={processing}
-                        />
-                        <span>
-                            Li e concordo em armazenar os dados desta nota fiscal
-                            para comparar com minha lista de preços, conforme a LGPD.
-                        </span>
-                    </label>
-
                     <button
                         type="submit"
                         className="scan-nfce-submit"
-                        disabled={processing || chaveManual.length !== 44 || !consentimento}
+                        disabled={processing || chaveManual.length !== 44}
                     >
                         {processing ? 'Consultando...' : 'Consultar Nota'}
                     </button>

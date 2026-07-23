@@ -24,6 +24,7 @@ const FeiraDetalhe = () => {
     const [buscaItem, setBuscaItem] = useState("");
     const buscaRef = useRef(null);
     const modalBoxRef = useRef(null);
+    const [showConsentModal, setShowConsentModal] = useState(false);
 
     useEffect(() => {
         if (showItemModal && modalBoxRef.current) {
@@ -115,7 +116,16 @@ const FeiraDetalhe = () => {
     };
 
     const handleScanNFCe = () => {
+        setShowConsentModal(true);
+    };
+
+    const handleAcceptConsent = () => {
+        setShowConsentModal(false);
         navigate(`/feira/${id}/scan-nfce`);
+    };
+
+    const handleCancelConsent = () => {
+        setShowConsentModal(false);
     };
 
     useEffect(() => {
@@ -284,6 +294,27 @@ const FeiraDetalhe = () => {
                             </button>
                             <button className="btn-criar" onClick={handleSaveQuantidade} disabled={savingItem}>
                                 {savingItem ? "Salvando..." : "Salvar"}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {showConsentModal && (
+                <div className="modal-overlay" onClick={handleCancelConsent}>
+                    <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+                        <h3>Consentimento LGPD</h3>
+                        <p>
+                            Ao escanear a nota fiscal, você concorda com o armazenamento dos dados
+                            da NFCe para comparar com sua lista de preços. Os dados são usados
+                            apenas para esta funcionalidade e podem ser removidos a qualquer momento.
+                        </p>
+                        <div className="modal-actions">
+                            <button className="btn-cancelar" onClick={handleCancelConsent}>
+                                Cancelar
+                            </button>
+                            <button className="btn-criar" onClick={handleAcceptConsent}>
+                                Aceitar e Escanear
                             </button>
                         </div>
                     </div>

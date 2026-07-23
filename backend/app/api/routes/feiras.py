@@ -56,14 +56,14 @@ async def criar_feira(
     return {"message": "Feira criada com sucesso"}
 
 
-@feiras_router.put("/feira/{id}")
+@feiras_router.put("/feira/{feira_id}", response_model=FeiraDetalheSchema)
 async def atualizar_feira(
-    id: int,
+    feira_id: int,
     feira_update: FeiraUpdate,
     session: Session = Depends(pegar_session),
     usuario: Usuario = Depends(verify_token),
 ):
-    feira_db = session.query(Feira).filter(Feira.id == id).first()  # type: ignore
+    feira_db = session.query(Feira).filter(Feira.id == feira_id).first()  # type: ignore
     if not feira_db:
         raise HTTPException(status_code=404, detail="Feira não encontrada")
     if feira_db.usuario_id != usuario.id:  # type: ignore
@@ -80,6 +80,27 @@ async def atualizar_feira(
     session.commit()
     session.refresh(feira_db)
     return FeiraSchema.from_orm(feira_db)
+
+
+@feiras_router.post("/feira/{id}/finalizar")
+async def finalizar_feira(
+    id: int,
+    session: Session = Depends(pegar_session),
+    usuario: Usuario = Depends(verify_token),
+):
+    feira_db = session.query(Feira).filter(Feira.id == id).first()  # type: ignore
+    if not feira_db:
+        raise HTTPException(status_code=404, detail="Feira não encontrada")
+    if feira_db.usuario_id != usuario.id:  # type: ignore
+        raise HTTPException(status_code=403, detail="Acesso negado")
+
+    if feira_db.status == "finalizada":
+        raise HTTPException(status_code=400, detail="Feira já foi finalizada")
+
+    feira_db.status = "finalizada"
+    session.commit()
+    session.refresh(feira_db)
+    return {"message": "Feira finalizada com sucesso"}
 
 
 @feiras_router.delete("/feira/{id}")

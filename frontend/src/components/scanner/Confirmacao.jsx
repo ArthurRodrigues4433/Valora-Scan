@@ -115,7 +115,7 @@ const Confirmacao = () => {
                     <h2 className="confirmacao-title">Confirmar Produto</h2>
                     {confianca > 0 && (
                         <span className="confianca-badge">
-                            {(confianca * 100).toFixed(0)}% confianÃ§a
+                            {(confianca * 100).toFixed(0)}% confiança
                         </span>
                     )}
                 </div>
@@ -142,7 +142,7 @@ const Confirmacao = () => {
 
                     <div className="form-row">
                         <div className="form-group">
-                            <label className="form-label">PreÃ§o Varejo</label>
+                            <label className="form-label">Preço Varejo</label>
                             <input
                                 type="number"
                                 step="0.01"
@@ -155,7 +155,7 @@ const Confirmacao = () => {
                         </div>
 
                         <div className="form-group">
-                            <label className="form-label">PreÃ§o Atacado</label>
+                            <label className="form-label">Preço Atacado</label>
                             <input
                                 type="number"
                                 step="0.01"
@@ -169,7 +169,7 @@ const Confirmacao = () => {
 
                     <div className="form-row">
                         <div className="form-group">
-                            <label className="form-label">Qtd. MÃ­nima Atacado</label>
+                            <label className="form-label">Qtd. Min Atacado</label>
                             <input
                                 type="number"
                                 className="form-input"
@@ -182,7 +182,7 @@ const Confirmacao = () => {
 
                     <div className="form-row">
                         <div className="form-group">
-                            <label className="form-label">CÃ³digo de Barras (EAN)</label>
+                            <label className="form-label">Código de Barras (EAN)</label>
                             <input
                                 type="text"
                                 className="form-input"
@@ -223,7 +223,7 @@ const Confirmacao = () => {
                     <div className="preco-resumo">
                         <div className="preco-row">
                             <span className="preco-label">
-                                <IoPricetag /> PreÃ§o {tipoPreco === 'atacado' ? 'Atacado' : 'Varejo'}
+                                <IoPricetag /> Preço {tipoPreco === 'atacado' ? 'Atacado' : 'Varejo'}
                             </span>
                             <span className="preco-valor">
                                 R$ {precoEscolhido.toFixed(2).replace('.', ',')}
@@ -249,7 +249,7 @@ const Confirmacao = () => {
                             className="btn-confirmar"
                             disabled={submitting}
                         >
-                            <IoCheckmark /> {submitting ? 'Adicionando...' : 'Adicionar Ã  Feira'}
+                            <IoCheckmark /> {submitting ? 'Adicionando...' : 'Adicionar Produto'}
                         </button>
                     </div>
                 </form>

@@ -30,8 +30,10 @@ class NFCeService:
     def consultar_nota(qr_data: str) -> dict:
         """Consulta NFCe na SEFAZ-PE e retorna dados estruturados"""
 
-        chave = NFCeService.extrair_chave(qr_data)
-        url = f"{NFCeService.BASE_URL}?p={chave}"
+        url = qr_data.strip()
+        if not url.startswith('http'):
+            chave = NFCeService.extrair_chave(qr_data)
+            url = f"{NFCeService.BASE_URL}?p={chave}"
 
         headers = {
             "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
@@ -49,8 +51,21 @@ class NFCeService:
         except ET.ParseError:
             raise ValueError("Erro ao processar resposta da SEFAZ")
 
-        # Verifica se houve erro
-        erro_elem = root.find('.//erro')
+        # Verifica se houve erro (considerando namespaces)
+        namespaces = [
+            {'nfe': 'http://www.portalfiscal.inf.br/nfe'},
+            {'nfe': 'http://www.portalfiscal.inf.br/nfe/'},
+            {},
+        ]
+        erro_elem = None
+        for ns in namespaces:
+            if ns:
+                erro_elem = root.find('.//nfe:erro', ns)
+            else:
+                erro_elem = root.find('.//erro')
+            if erro_elem is not None:
+                break
+
         if erro_elem is not None and erro_elem.text and erro_elem.text.strip() not in ('0', ''):
             codigo_erro = erro_elem.text.strip()
             if codigo_erro == '100':

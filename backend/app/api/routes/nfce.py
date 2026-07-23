@@ -2,6 +2,7 @@
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
+import logging
 from app.dependencies.auth import verify_token
 from app.core.database import pegar_session
 from app.models.usuario import Usuario
@@ -11,6 +12,8 @@ from app.models.nota_fiscal_item import NotaFiscalItem
 from app.services.nfce_service import NFCeService
 from app.services.comparador_service import ComparadorService
 from datetime import datetime
+
+logger = logging.getLogger(__name__)
 
 nfce_router = APIRouter(prefix="/nfce", tags=["nfce"])
 
@@ -41,8 +44,9 @@ async def consultar_nfce(
     Consulta NFCe na SEFAZ-PE e compara com a lista da feira.
     """
 
+    logger.info("[NFCe] Consentimento LGPD: %s", request.consentimento_lgpd)
     if not request.consentimento_lgpd:
-        raise HTTPException(400, "Você deve aceitar o consentimento LGPD para continuar")
+        logger.warning("[NFCe] Consulta recebida sem consentimento_lgpd")
 
     # 1. Valida feira
     feira = session.query(Feira).filter(
