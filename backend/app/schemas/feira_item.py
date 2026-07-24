@@ -8,8 +8,8 @@ class FeiraItemBase(BaseModel):
     nome: str
     categoria: Optional[str] = None
     preco_varejo: float = Field(gt=0, description="Preço de varejo deve ser maior que zero")
-    preco_atacado: Optional[float] = Field(default=None, gt=0, description="Preço de atacado deve ser maior que zero")
-    qtd_minima_atacado: Optional[int] = Field(default=None, gt=0, description="Quantidade mínima deve ser maior que zero")
+    preco_atacado: Optional[float] = Field(default=None, ge=0, description="Preço de atacado deve ser maior ou igual a zero")
+    qtd_minima_atacado: Optional[int] = Field(default=None, ge=0, description="Quantidade mínima deve ser maior ou igual a zero")
     quantidade: int = Field(gt=0, description="Quantidade deve ser maior que zero")
     unidade_medida: Optional[str] = None
     imagem_url: Optional[str] = None
@@ -33,10 +33,10 @@ class FeiraItemCreate(FeiraItemBase):
 class FeiraItemUpdate(BaseModel):
     nome: Optional[str] = None
     categoria: Optional[str] = None
-    preco_varejo: Optional[float] = Field(default=None, gt=0)
-    preco_atacado: Optional[float] = Field(default=None, gt=0)
-    qtd_minima_atacado: Optional[int] = Field(default=None, gt=0)
-    quantidade: Optional[int] = Field(default=None, gt=0)
+    preco_varejo: Optional[float] = Field(default=None, ge=0)
+    preco_atacado: Optional[float] = Field(default=None, ge=0)
+    qtd_minima_atacado: Optional[int] = Field(default=None, ge=0)
+    quantidade: Optional[int] = Field(default=None, ge=0)
     unidade_medida: Optional[str] = None
     imagem_url: Optional[str] = None
     ocr_texto: Optional[str] = None
